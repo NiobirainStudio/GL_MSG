@@ -1,4 +1,5 @@
-﻿using GL_APP.Models;
+﻿using GL_APP.Data;
+using GL_APP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +7,18 @@ namespace GL_APP.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(AppDbContext db)
         {
-            _logger = logger;
+            _db = db;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var userNames = _db.Users.Select(u => u.Name).ToArray();
+            var str = string.Join("\n", userNames);
+            return Content(str);
         }
 
         public IActionResult Privacy()
