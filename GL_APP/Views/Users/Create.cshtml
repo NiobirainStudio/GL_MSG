@@ -1,26 +1,21 @@
-﻿@model LoginViewModel
+﻿@model GL_APP.Models.User
 
 @{
-    ViewData["Title"] = "Login Page";
+    ViewData["Title"] = "Create";
 }
 
-<h1>Login</h1>
+<h1>Create</h1>
 
-<h4>LoginViewModel</h4>
+<h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Login">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using GL_APP.Helpers
+@using Microsoft.AspNetCore.Html
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -10,5 +12,6 @@
     {
         <div>@message.Text</div>
         <div>@message.User.Name  <span>@message.When</span></div>
+        @Html.RenderName("Петя")
     }
 </div>
