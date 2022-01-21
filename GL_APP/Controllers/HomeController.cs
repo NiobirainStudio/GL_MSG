@@ -15,6 +15,7 @@ namespace GL_APP.Controllers
             _db = db;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var messages = _db.Messages.Include(m => m.User);
@@ -27,9 +28,42 @@ namespace GL_APP.Controllers
             return View(model);
         }
 
-        public IActionResult Login2(string name, string password)
+        [HttpPost]
+        public IActionResult Login(string name, string password)
         {
-            return Content(name + " " + password);
+            var user = _db.Users.FirstOrDefault(u => u.Password == password);
+            if (user == null)
+            {
+                user = new User { Name = name, Password = password };
+                _db.Users.Add(user);
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Discuss", new { userId = user.Id, userName = user.Name });
+        }
+
+        public IActionResult Discuss(int userId, string userName)
+        {
+            ViewBag.Messages = _db.Messages.Include(m => m.User)
+                .OrderByDescending(m => m.When)
+                .Take(10).ToArray();
+
+            var model = new Message { UserName = userName, UserId = userId };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Discuss(Message message)
+        {
+            message.When = DateTime.Now;
+            _db.Messages.Add(message);
+            _db.SaveChanges();
+
+            ViewBag.Messages = _db.Messages.Include(m => m.User)
+                .OrderByDescending(m => m.When)
+                .Take(10).ToArray();
+
+            return View(message);
         }
 
         public IActionResult Privacy()
