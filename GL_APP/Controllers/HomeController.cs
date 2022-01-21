@@ -18,7 +18,7 @@ namespace GL_APP.Controllers
         {
             var userNames = _db.Users.Select(u => u.Name).ToArray();
             var str = string.Join("\n", userNames);
-            return Content(str);
+            return View();
         }
 
         public IActionResult Privacy()

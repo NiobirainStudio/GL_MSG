@@ -1,6 +1,42 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    string[] ss = { "You", "Are", "Human" };
 }
+
+@{
+    int number = 1;
+    string message = "Number is  " + number;
+ }
+ <p>Your Message: @message </p>
+
+@{
+    void RenderName(string name)
+    {
+        <p>Name: <strong>@name</strong></p>
+    }
+
+    RenderName("Mahatma Gandhi");
+    RenderName("Martin Luther King, Jr.");
+}
+
+<ul>
+   @foreach (var s in ss)
+   {
+      <li>@s</li>
+   }
+</ul>
+
+@if (DateTime.Now.Year == 2022) {
+    <text>
+        if year is 2022 then print this <br/>
+        multi-line text block and
+        the date: @DateTime.Now
+    </text>
+ }
+
+ @("<h1>Привет с Марса</h1>")
+
+ @Html.Raw("<h1>Привет с Марса</h1>")
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
