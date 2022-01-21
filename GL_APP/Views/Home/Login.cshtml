@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Login Page";
+}
+
+@model LoginViewModel
+
+<h1>Login</h1>
+
+<form action="/home/login2" method="post">
+    <div>
+        Name <input type="text" name="Name" value=@Model.Name/>
+    </div>
+    <div>
+        Password <input type="text" name="Password" value=@Model.Password/>
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+</form>

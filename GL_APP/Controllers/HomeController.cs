@@ -1,6 +1,7 @@
 ﻿using GL_APP.Data;
 using GL_APP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace GL_APP.Controllers
@@ -16,9 +17,19 @@ namespace GL_APP.Controllers
 
         public IActionResult Index()
         {
-            var userNames = _db.Users.Select(u => u.Name).ToArray();
-            var str = string.Join("\n", userNames);
-            return View();
+            var messages = _db.Messages.Include(m => m.User);
+            return View(messages);
+        }
+
+        public IActionResult Login()
+        {
+            var model = new LoginViewModel();
+            return View(model);
+        }
+
+        public IActionResult Login2(string name, string password)
+        {
+            return Content(name + " " + password);
         }
 
         public IActionResult Privacy()
