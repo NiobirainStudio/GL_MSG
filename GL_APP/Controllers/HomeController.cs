@@ -29,17 +29,27 @@ namespace GL_APP.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string name, string password)
+        public IActionResult Login([FromForm] LoginViewModel model)
         {
-            var user = _db.Users.FirstOrDefault(u => u.Password == password);
-            if (user == null)
+            if (ModelState.IsValid)
             {
-                user = new User { Name = name, Password = password };
-                _db.Users.Add(user);
-                _db.SaveChanges();
+                var user = _db.Users.FirstOrDefault(u => u.Name == model.Name);
+                
+                // User with this name doesn't exist
+                if (user == null)
+                {
+                    user = new User { Name = model.Name, Password = model.Password };
+                    _db.Users.Add(user);
+                    _db.SaveChanges();
+                    return RedirectToAction("Discuss", new { userId = user.Id, userName = user.Name });
+                }
+                // User exists and the password is correct
+                else if (user.Password == model.Password)
+                {
+                    return RedirectToAction("Discuss", new { userId = user.Id, userName = user.Name });
+                }
             }
-
-            return RedirectToAction("Discuss", new { userId = user.Id, userName = user.Name });
+            return View(model);
         }
 
         public IActionResult Discuss(int userId, string userName)
@@ -48,7 +58,7 @@ namespace GL_APP.Controllers
                 .OrderByDescending(m => m.When)
                 .Take(10).ToArray();
 
-            var model = new Message { UserName = userName, UserId = userId };
+            var model = new Message { UserId = userId, UserName = userName };
             return View(model);
         }
 
@@ -65,6 +75,16 @@ namespace GL_APP.Controllers
 
             return View(message);
         }
+
+        /*
+        [AcceptVerbs("GET", "POST")]
+        public JsonResult UserDoesntExist(string name)
+        {
+            if (_db.Users.Any(s => s.Name != name))
+                return Json("User doesn't exists!");
+            return Json(true);
+        }
+        */
 
         public IActionResult Privacy()
         {

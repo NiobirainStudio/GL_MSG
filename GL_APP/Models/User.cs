@@ -1,4 +1,6 @@
-﻿namespace GL_APP.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GL_APP.Models
 {
     public class User
     {
