@@ -1,4 +1,6 @@
-﻿namespace GL_PROJ.Models
+﻿using GL_PROJ.Models.DbContextModels;
+
+namespace GL_PROJ.Models
 {
     // This class defines the main model
     public partial class MainViewModel

@@ -20,6 +20,8 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 
+
+
 // Using static files a. k. a. wwwroot files?
 app.UseStaticFiles();
 

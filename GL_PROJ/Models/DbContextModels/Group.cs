@@ -1,19 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GL_PROJ.Models
+namespace GL_PROJ.Models.DbContextModels
 {
     // This class defines the user model
-    public class User
+    public class Group
     {
-        // Custom user Id
+        // Custom group Id
         public int Id { get; set; }
 
-        // User name
+        // Group name
         [Required]
         public string Name { get; set; }
 
-        // User password
-        [Required]
-        public string Password { get; set; }
+        // Group description
+        public string Description { get; set; }
     }
 }

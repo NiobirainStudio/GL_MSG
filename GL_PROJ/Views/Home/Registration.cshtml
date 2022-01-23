@@ -1,22 +1,22 @@
-﻿<!--Use LoginViewModel template-->
-@model GL_PROJ.Models.LoginViewModel
+﻿<!--Use RegistrationViewModel template-->
+@model GL_PROJ.Models.RegistrationViewModel
 
 <!DOCTYPE html>
 
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
+    <title>Registration</title>
 </head>
 <body>
 
-<h1>Login</h1>
+<h1>Registration</h1>
 
 <!--Display error message if recieved-->
 <p>@ViewBag.Error</p>
 
-<!--Login form-->
-<form action="/Home/Login" method="post">
+<!--Registration form-->
+<form action="/Home/Registration" method="post">
     <div>
         Username <input type="text" name="Username" value=@Model.UserName />
     </div>
@@ -24,12 +24,12 @@
         Password <input type="text" name="Password" value=@Model.Password />
     </div>
     <div>
-        <input type="submit" value="Login" />
+        <input type="submit" value="Create Account" />
     </div>
 </form>
 
-<!--Registration link-->
-<a href="/Home/Registration">Create account</a>
+<!--Login link-->
+<a href="/Home/Login">Login</a>
 
 </body>
 </html>

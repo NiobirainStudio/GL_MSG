@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GL_PROJ.Models;
+using GL_PROJ.Models.DbContextModels;
 using System.Diagnostics;
 using GL_PROJ.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,52 @@ namespace GL_PROJ.Controllers
             _db = db;
         }
 
+
+
+        //------------------------------------------------------------//
+
+        // Login page block
+        // This GET method returns the registration page in order to recieve user data
+        [HttpGet]
+        public IActionResult Registration()
+        {
+            // Return registration page
+            var model = new RegistrationViewModel();
+            return View(model);
+        }
+
+        // This POST method recieves user data from the registration page
+        [HttpPost]
+        public IActionResult Registration(RegistrationViewModel model)
+        {
+            // Check for model validity
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Error = "Invalid input!";
+                return View(model);
+            }
+
+            // Find user by name
+            var user = _db.Users.FirstOrDefault(u => u.Name == model.UserName);
+
+            // User already exists error
+            if (user != null)
+            {
+                ViewBag.Error = "User already exists!";
+                return View(model);
+            }
+
+            // Create if not found
+            user = new User { Name = model.UserName, Password = model.Password };
+            _db.Users.Add(user);
+            _db.SaveChanges();
+
+            // Redirect to the main method (GET)
+            return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
+        }
+
+
+
         //------------------------------------------------------------//
 
         // Login page block
@@ -24,7 +71,7 @@ namespace GL_PROJ.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Return Login page
+            // Return login page
             var model = new LoginViewModel();
             return View(model);
         }
@@ -36,34 +83,32 @@ namespace GL_PROJ.Controllers
             // Check for model validity
             if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Invalid Input!";
+                ViewBag.Error = "Invalid input!";
                 return View(model);
             }
 
             // Find user by name
             var user = _db.Users.FirstOrDefault(u => u.Name == model.UserName);
 
-            // Create if not found
+            // User doesn't exist error
             if (user == null)
             {
-                user = new User { Name = model.UserName, Password = model.Password };
-                _db.Users.Add(user);
-                _db.SaveChanges();
-                
-                // Redirect to the main method (GET)
-                return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
+                ViewBag.Error = "User doesn't exist!";
+                return View(model);
             }
 
             // Return the login page with an error
             if(user.Password != model.Password)
             {
-                ViewBag.Error = "Incorrect Password!";
+                ViewBag.Error = "Incorrect password!";
                 return View(model);
             }
 
             // Redirect to the main method (GET)
             return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
         }
+
+
 
         //------------------------------------------------------------//
 
@@ -76,11 +121,13 @@ namespace GL_PROJ.Controllers
             var model = new MainViewModel();
 
             model.Messages = _db.Messages.Include(m => m.User)
-                .OrderByDescending(m => m.When)
+                .OrderByDescending(m => m.Date)
                 .Take(10).ToArray();
 
             return View(model);
         }
+
+
 
         //------------------------------------------------------------//
 
