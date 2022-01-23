@@ -1,0 +1,22 @@
+﻿<!--Use MainViewModel template-->
+@model GL_PROJ.Models.MainViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Main</title>
+</head>
+<body>
+
+<h1>Main</h1>
+
+<!--Display recieved messages-->
+@foreach(var message in Model.Messages)
+{
+    <div><strong>@message.User.Name:</strong> @message.Text</div>
+}
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+﻿<!--Use LoginViewModel template-->
+@model GL_PROJ.Models.LoginViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+</head>
+<body>
+
+<h1>Login</h1>
+
+<!--Display error message if recieved-->
+<p>@ViewBag.Error</p>
+
+<!--Login form-->
+<form action="/home/login" method="post">
+    <div>
+        Username <input type="text" name="Username" value=@Model.UserName />
+    </div>
+    <div>
+        Password <input type="text" name="Password" value=@Model.Password />
+    </div>
+    <div>
+        <input type="submit" value="Login" />
+    </div>
+</form>
+
+</body>
+</html>
