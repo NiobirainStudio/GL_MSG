@@ -1,0 +1,23 @@
+﻿<!--
+    The _Layout page is the basis for other pages.
+    The body is rendered using the Razor RenderBody() method. 
+-->
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Main Page</title>
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @{await RenderSectionAsync("Scripts", required: false);}
+</body>
+</html>

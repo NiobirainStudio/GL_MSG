@@ -1,39 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GL_PROJ.Models.DbContextModels
+namespace GL_PROJ.Models.DTO
 {
-    // This class defines the message model
-    public class Message
+    public class MessageDTO
     {
         // Custom message Id
-        public int Id { get; set; }
+        public int MessageId { get; set; }
 
         // Message text
-        [Required]
         public string Data { get; set; }
 
         // Date the message was sent 
-        [Required]
         public DateTime Date { get; set; }
 
         // Message type
-        [Required]
         public int Type { get; set; }
 
-
         // Message author Id
-        [Required]
         public int UserId { get; set; }
 
-        // Defining a foreign key from users
-        public User User { get; set; }
-
+        // Author Name
+        public string UserName { get; set; }
 
         // Group Id
-        [Required]
         public int GroupId { get; set; }
 
-        // Defining a foreign key from groups
-        public Group Group { get; set; }
     }
 }

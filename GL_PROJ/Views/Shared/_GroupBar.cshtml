@@ -1,0 +1,22 @@
+﻿@using GL_PROJ.Models.DbContextModels
+@model List<Group>
+
+<h3>Welcome to groups!</h3>
+
+<!--Creating a list of radio buttons from recieved groups-->
+@using (Html.BeginForm()){
+    @Html.AntiForgeryToken()
+    ;
+
+    if (Model != null)
+    {
+        @foreach(var group in Model)
+        {
+            <div>
+                @Html.RadioButton("CustomerNumber", group.Id, false, new { onchange = "getMessagesByGroupId(this)" })
+                @Html.Label(group.Name)
+                @Html.Label(group.Description)
+            </div>
+        }
+    }
+}

@@ -1,22 +1,78 @@
-﻿<!--Use MainViewModel template-->
+﻿<!--
+    The main page is inserted into the RenderBody() block inside of the _Layout page.
+-->
+
 @model GL_PROJ.Models.MainViewModel
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Main</title>
-</head>
-<body>
-
-<h1>Main</h1>
-
-<!--Display recieved messages-->
-@foreach(var message in Model.Messages)
-{
-    <div><strong>@message.User.Name:</strong> @message.Data</div>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-</body>
-</html>
+@{await Html.RenderPartialAsync("_GroupBar", Model.Groups);}
+
+<hr />
+
+<h1 style="background-color: red;">Message Box</h1>
+<div id="messages">
+        
+</div>
+
+<!--The Scripts section is rendered from the _Layout page using the RenderSectionAsync() method. -->
+
+@section Scripts{
+    <script>
+        // Random RGB color string generator
+        function random_rgb() {
+            var o = Math.round, r = Math.random, s = 255;
+            return 'rgb(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ')';
+        }
+
+        // AJAX request function that calls the GetMessagesByGroupId method from the Home controller
+        function getMessagesByGroupId(element) {
+            $.ajax({
+                url: "GetMessagesByGroupId",
+
+                data: {
+                    "groupId": element.value
+                },
+
+                type: "GET",
+  
+                success: function(response){
+                    // On success add all the messages from the response
+                    console.log(response);
+
+                    var parent = document.getElementById("messages");
+
+                    parent.innerHTML = '';
+
+                    for (var a = 0; a < response.length; a++){
+                        var newMsg = document.createElement("div");
+
+                        var h3Name = document.createElement("p");
+                        h3Name.innerText = response[a].userName;
+
+                        var h3Date = document.createElement("p");
+                        h3Date.innerText = response[a].date;
+
+                        var h3Data = document.createElement("p");
+                        h3Data.innerText = response[a].data;
+
+                        newMsg.style.backgroundColor = random_rgb();
+                        newMsg.appendChild(h3Name);
+                        newMsg.appendChild(h3Date);
+                        newMsg.appendChild(h3Data);
+
+                        parent.appendChild(newMsg);
+                    }
+                },
+                failure: function(response){
+                    console.log(response);
+                },
+                error: function(response){
+                    console.log(response);
+                }
+            });
+        }
+    </script>
+}
