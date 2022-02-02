@@ -4,7 +4,7 @@ namespace GL_PROJ.Data
 {
     interface IDB
     {
-        void CreateUser(User user) { }
+        bool CreateUser(User user) { return false; }
 
         //void DeleteUser(User user) { }
 
@@ -12,9 +12,9 @@ namespace GL_PROJ.Data
 
         //void DeleteGroup(Group group) { }
 
-        void LeaveGroup(Group group, string UID) { }
+        bool LeaveGroup(Group group, string UID) { return false; }
 
-        void JoinGroup(Group group, string UID) { }
+        bool JoinGroup(Group group, string UID) { return false; }
 
         void WriteMessage(Message message) { }
 
@@ -29,39 +29,63 @@ namespace GL_PROJ.Data
         {
             _db = db;
         }
-        public void CreateUser(User user) 
-        { 
-            _db.Users.Add(user);
+
+        private bool ContainsUser(User user)
+        {
+            var tmp_user = _db.Users.FirstOrDefault(u => u.Name == user.Name);
+            return tmp_user != null;
+        }
+        private bool UserInGroup(int UID, int GID)
+        {
+            int[] param = { UID, GID };
+            var ugr = _db.UserGroupRelations.Find(param);
+            return ugr != null;
+        }
+        public bool CreateUser(User user) 
+        {
+            bool res = false;
+            if (!ContainsUser(user)) 
+            {
+                _db.Users.Add(user);
+                res = true;
+            }
             _db.SaveChanges();
+            return res;
         }
         public void CreateGroup(Group group) 
         {
             _db.Groups.Add(group);
             _db.SaveChanges();
         }
-        public void LeaveGroup(Group group, string UID)
+        public bool LeaveGroup(Group group, string UID)
         {
             int id;
             if (int.TryParse(UID, out id))
             {
+                if (!UserInGroup(id, group.Id))
+                    return false;
                 UserGroupRelation ugr = _db.UserGroupRelations.Find(id, group.Id);
                 if (ugr != null)
                     _db.UserGroupRelations.Remove(ugr);
+                _db.SaveChanges();
             }
-            _db.SaveChanges();
+            return true;
         }
 
-        public void JoinGroup(Group group, string UID)
+        public bool JoinGroup(Group group, string UID)
         {
             int id;
             if (int.TryParse(UID, out id))
             {
+                if (UserInGroup(id, group.Id))
+                    return false;
                 User tmp = _db.Users.Find(id);
                 UserGroupRelation ugr = new UserGroupRelation { Group = group, GroupId = group.Id,
-                 Privilege = "null", User = tmp, UserId = id };
+                 Privilege = "user", User = tmp, UserId = id };
                 _db.UserGroupRelations.Add(ugr);
                 _db.SaveChanges();
             }
+            return true;
         }
         public void WriteMessage(Message message) 
         {
