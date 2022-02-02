@@ -20,7 +20,7 @@ namespace GL_PROJ.Data
 
         public List<Group> GroupsByUID(string UID) { return null; }
 
-        public List<Message> MessagesByUID(string UID) { return null; }
+        public List<Message> MessagesByGID(string GID) { return null; }
     }
     public class DB_Manager : IDB
     {
@@ -75,10 +75,10 @@ namespace GL_PROJ.Data
             return _db.Groups.Where(g => groud_ids.Contains(g.Id)).ToList();
         }
 
-        public List<Message> MessagesByUID(string UID)
+        public List<Message> MessagesByGID(string GID)
         {
             
-            return _db.Messages.Where(m=>m.UserId.ToString()==UID).ToList();
+            return _db.Messages.Where(m=>m.GroupId.ToString()==GID).ToList();
         }
 
     }
