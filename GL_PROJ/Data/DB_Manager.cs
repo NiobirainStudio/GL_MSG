@@ -35,10 +35,10 @@ namespace GL_PROJ.Data
             var tmp_user = _db.Users.FirstOrDefault(u => u.Name == user.Name);
             return tmp_user != null;
         }
+        //find method doesn't work
         private bool UserInGroup(int UID, int GID)
         {
-            int[] param = { UID, GID };
-            var ugr = _db.UserGroupRelations.Find(param);
+            var ugr = _db.UserGroupRelations.SingleOrDefault(ugr => ugr.UserId == UID && ugr.GroupId == GID);
             return ugr != null;
         }
         public bool CreateUser(User user) 
@@ -57,6 +57,7 @@ namespace GL_PROJ.Data
             _db.Groups.Add(group);
             _db.SaveChanges();
         }
+        //doesn't work
         public bool LeaveGroup(Group group, string UID)
         {
             int id;
@@ -64,9 +65,9 @@ namespace GL_PROJ.Data
             {
                 if (!UserInGroup(id, group.Id))
                     return false;
-                UserGroupRelation ugr = _db.UserGroupRelations.Find(id, group.Id);
-                if (ugr != null)
-                    _db.UserGroupRelations.Remove(ugr);
+
+                _db.UserGroupRelations.Remove(
+                    _db.UserGroupRelations.SingleOrDefault(ugr=>ugr.UserId==id&&ugr.GroupId==group.Id));
                 _db.SaveChanges();
             }
             return true;
