@@ -14,6 +14,8 @@ namespace GL_PROJ.Data
 
         void LeaveGroup(Group group, string UID) { }
 
+        void JoinGroup(Group group, string UID) { }
+
         void WriteMessage(Message message) { }
 
         public List<Group> GroupsByUID(string UID) { return null; }
@@ -37,11 +39,29 @@ namespace GL_PROJ.Data
             _db.Groups.Add(group);
             _db.SaveChanges();
         }
-        public void LeaveGroup(Group group, string UID) 
+        public void LeaveGroup(Group group, string UID)
         {
-            UserGroupRelation ugr = _db.UserGroupRelations.Find(UID,group.Id);
-            _db.UserGroupRelations.Remove(ugr);
+            int id;
+            if (int.TryParse(UID, out id))
+            {
+                UserGroupRelation ugr = _db.UserGroupRelations.Find(id, group.Id);
+                if (ugr != null)
+                    _db.UserGroupRelations.Remove(ugr);
+            }
             _db.SaveChanges();
+        }
+
+        public void JoinGroup(Group group, string UID)
+        {
+            int id;
+            if (int.TryParse(UID, out id))
+            {
+                User tmp = _db.Users.Find(id);
+                UserGroupRelation ugr = new UserGroupRelation { Group = group, GroupId = group.Id,
+                 Privilege = "null", User = tmp, UserId = id };
+                _db.UserGroupRelations.Add(ugr);
+                _db.SaveChanges();
+            }
         }
         public void WriteMessage(Message message) 
         {
