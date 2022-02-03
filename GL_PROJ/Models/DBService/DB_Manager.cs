@@ -17,6 +17,7 @@ namespace GL_PROJ.Models.DBService
             return tmp_user != null;
         }
         /*perhaps this technical method will be useful in some other situations*/
+        /**/
         private bool ContainsUserByUserID(string UID)
         {
             int id;
