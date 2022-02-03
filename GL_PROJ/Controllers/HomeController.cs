@@ -13,9 +13,9 @@ namespace GL_PROJ.Controllers
     {
         // Database linking and a class object to handle data
         private readonly AppDbContext _db;
-        private readonly Models.DBService.IDB _dbManager;
+        private readonly IDB _dbManager;
 
-        public HomeController(AppDbContext db, Models.DBService.IDB dbManager)
+        public HomeController(AppDbContext db, IDB dbManager)
         {
             _db = db;
             _dbManager = dbManager;
