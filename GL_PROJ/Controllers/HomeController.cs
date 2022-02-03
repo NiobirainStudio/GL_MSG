@@ -89,7 +89,7 @@ namespace GL_PROJ.Controllers
                 ViewBag.Error = "Invalid input!";
                 return View(model);
             }
-
+            /**/
             // Find user by name
             var user = _db.Users.FirstOrDefault(u => u.Name == model.UserName);
 
