@@ -1,11 +1,14 @@
 using GL_PROJ.Data;
 using Microsoft.EntityFrameworkCore;
+using GL_PROJ.Models.DBService;
 
 // Buidler initialization
 var builder = WebApplication.CreateBuilder(args);
 
 // Adding all controllers with views
 builder.Services.AddControllersWithViews();
+//adding a service to handle data by means of dependency injection
+builder.Services.AddTransient<IDB, DB_Manager>();
 
 // Connecting a database
 builder.Services.AddDbContext<AppDbContext>(options =>

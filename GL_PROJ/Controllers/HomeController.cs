@@ -4,18 +4,21 @@ using GL_PROJ.Models.DbContextModels;
 using System.Diagnostics;
 using GL_PROJ.Data;
 using Microsoft.EntityFrameworkCore;
+using GL_PROJ.Models.DBService;
 
 namespace GL_PROJ.Controllers
 {
     // This class defines the home controller
     public class HomeController : Controller
     {
-        // Database linking
+        // Database linking and a class object to handle data
         private readonly AppDbContext _db;
+        private readonly IDB _dbManager;
 
-        public HomeController(AppDbContext db)
+        public HomeController(AppDbContext db, IDB dbManager)
         {
             _db = db;
+            _dbManager = dbManager;
         }
 
 
