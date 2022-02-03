@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Adding all controllers with views
 builder.Services.AddControllersWithViews();
 //adding a service to handle data by means of dependency injection
-builder.Services.AddTransient<IDB, DB_Manager>();
+
+builder.Services.AddTransient<GL_PROJ.Models.DBService.IDB, GL_PROJ.Models.DBService.DB_Manager>();
 
 // Connecting a database
 builder.Services.AddDbContext<AppDbContext>(options =>
