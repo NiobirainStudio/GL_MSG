@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GL_PROJ.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220123155346_init")]
-    partial class init
+    [Migration("20220204085711_db_m1")]
+    partial class db_m1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GL_PROJ.Migrations
 {
-    public partial class init : Migration
+    public partial class db_m1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
