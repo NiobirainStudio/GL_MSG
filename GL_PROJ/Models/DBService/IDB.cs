@@ -17,6 +17,19 @@ namespace GL_PROJ.Models.DBService
         void JoinGroup(Group group, string UID) { }
 
         void WriteMessage(Message message) { }
+        void CreateUserAsync(User user) { }
+
+        //void DeleteUser(User user) { }
+
+        void CreateGroupAsync(Group group) { }
+
+        //void DeleteGroup(Group group) { }
+
+        void LeaveGroupAsync(Group group, string UID) { }
+
+        void JoinGroupAsync(Group group, string UID) { }
+
+        void WriteMessageAsync(Message message) { }
 
         public List<Group> GroupsByUID(string UID) { return null; }
 

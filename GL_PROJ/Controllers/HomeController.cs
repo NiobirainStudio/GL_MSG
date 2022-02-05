@@ -37,7 +37,7 @@ namespace GL_PROJ.Controllers
 
         // This POST method recieves user data from the registration page
         [HttpPost]
-        public IActionResult Registration(RegistrationViewModel model)
+        public  async IActionResult Registration(RegistrationViewModel model)
         {
             // Check for model validity
             if (!ModelState.IsValid)
@@ -45,7 +45,6 @@ namespace GL_PROJ.Controllers
                 ViewBag.Error = "Invalid input!";
                 return View(model);
             }
-
             // Find user by name
             var user = _db.Users.FirstOrDefault(u => u.Name == model.UserName);
 
@@ -60,7 +59,6 @@ namespace GL_PROJ.Controllers
             user = new User { Name = model.UserName, Password = model.Password };
             _db.Users.Add(user);
             _db.SaveChanges();
-
             // Redirect to the main method (GET)
             return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
         }

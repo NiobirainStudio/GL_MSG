@@ -1,5 +1,6 @@
 ﻿using GL_PROJ.Data;
 using GL_PROJ.Models.DbContextModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace GL_PROJ.Models.DBService
 {
@@ -11,7 +12,7 @@ namespace GL_PROJ.Models.DBService
             _db = db;
         }
         /*a method that checks if a user is in the system by comparing the data passed to the method with records in the database*/
-        private bool ContainsUser(User user) 
+        private bool ContainsUser(User user)
         {
             var tmp_user = _db.Users.FirstOrDefault(u => u.Name == user.Name);
             return tmp_user != null;
@@ -21,7 +22,7 @@ namespace GL_PROJ.Models.DBService
         private bool ContainsUserByUserID(string UID)
         {
             int id;
-            if(int.TryParse(UID, out id))
+            if (int.TryParse(UID, out id))
             {
                 var userbyID = _db.Users.SingleOrDefault(u => u.Id == id);
                 return userbyID != null;
@@ -92,6 +93,89 @@ namespace GL_PROJ.Models.DBService
         {
             _db.Messages.Add(message);
             _db.SaveChanges();
+        }
+        /*an async method that checks if a user is in the system by comparing the data passed to the method with records in the database*/
+        private async Task<bool> ContainsUserAsync(User user) 
+        {
+            var tmp_user =  await _db.Users.FirstOrDefaultAsync(u => u.Name == user.Name);
+            return tmp_user != null;
+        }
+        /*perhaps this technical method will be useful in some other situations*/
+        /**/
+        private async Task<bool> ContainsUserByUserIDAsync(string UID)
+        {
+            int id;
+            if(int.TryParse(UID, out id))
+            {
+                var userbyID = await  _db.Users.SingleOrDefaultAsync(u => u.Id == id);
+                return userbyID != null;
+            }
+            return false;
+        }
+
+        private async  Task<bool> UserInGroupAsync(int UID, int GID)
+        {
+            var ugr = await _db.UserGroupRelations.SingleOrDefaultAsync(ugr => ugr.UserId == UID && ugr.GroupId == GID);
+            return ugr != null;
+        }
+        /* async creating a user and checking if the user is in the database*/
+        public async  Task<bool> CreateUserAsync(User user)
+        {
+            bool res = false;
+            if (!await ContainsUserAsync(user))
+            {
+                await _db.Users.AddAsync(user);
+                res = true;
+            }
+            await _db.SaveChangesAsync();
+            return res;
+        }
+        public async Task CreateGroupAsync(Group group)
+        {
+             await _db.Groups.AddAsync(group);
+             await _db.SaveChangesAsync();
+        }
+        /* async leaving the group, and checking that the user is in the group*/
+        public async Task<bool> LeaveGroupAsync(Group group, string UID)
+        {
+            int id;
+            if (int.TryParse(UID, out id))
+            {
+                if (!await UserInGroupAsync(id, group.Id))
+                    return false;
+
+                _db.UserGroupRelations.Remove(
+                     await _db.UserGroupRelations.SingleOrDefaultAsync(ugr => ugr.UserId == id && ugr.GroupId == group.Id));
+                 await  _db.SaveChangesAsync();
+            }
+            return true;
+        }
+        /* async method for a user to leave a group, including checking that the user is in the group*/
+        public async Task<bool> JoinGroupAsync(Group group, string UID)
+        {
+            int id;
+            if (int.TryParse(UID, out id))
+            {
+                if (await UserInGroupAsync(id, group.Id))
+                    return false;
+                User tmp = _db.Users.Find(id);
+                UserGroupRelation ugr = new UserGroupRelation
+                {
+                    Group = group,
+                    GroupId = group.Id,
+                    Privilege = "user",
+                    User = tmp,
+                    UserId = id
+                };
+                await _db.UserGroupRelations.AddAsync(ugr);
+                await _db.SaveChangesAsync();
+            }
+            return true;
+        }
+        public async Task WriteMessageAsync(Message message)
+        {
+            await _db.Messages.AddAsync(message);
+            await _db.SaveChangesAsync();
         }
         /*in the method get the group ID for a specific userID, and then retrieve a list of groups from the "Groups" table according to this ID*/
 
