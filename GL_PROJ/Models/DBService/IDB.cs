@@ -1,4 +1,5 @@
 ﻿using GL_PROJ.Models.DbContextModels;
+using GL_PROJ.Models.DTO;
 
 namespace GL_PROJ.Models.DBService
 {
