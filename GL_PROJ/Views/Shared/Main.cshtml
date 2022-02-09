@@ -1,5 +1,5 @@
 ﻿<!--Use MainViewModel template-->
-@model GL_PROJ.Models.MainViewModel
+@model GL_PROJ.Models.MainViewModel;
 
 <!DOCTYPE html>
 
@@ -13,10 +13,7 @@
 <h1>Main</h1>
 
 <!--Display recieved messages-->
-@foreach(var message in Model.Messages)
-{
-    <div><strong>@message.User.Name:</strong> @message.Data</div>
-}
+
 
 </body>
 </html>

@@ -3,29 +3,42 @@ using GL_PROJ.Models;
 using GL_PROJ.Models.DbContextModels;
 using System.Diagnostics;
 using GL_PROJ.Data;
-using Microsoft.EntityFrameworkCore;
+using GL_PROJ.Models.DTO;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 using GL_PROJ.Models.DBService;
+using System.Net.WebSockets;
+using System.Net;
+using Microsoft.AspNetCore.SignalR;
+using GL_PROJ.AppConfig;
+using GL_PROJ.TimerFeatures;
 
 namespace GL_PROJ.Controllers
 {
-    // This class defines the home controller
-    public class HomeController : Controller
+    public class HomeController : ControllerBase //Controller
     {
-        // Database linking and a class object to handle data
-        private readonly AppDbContext _db;
+        // Database manager linking
         private readonly IDB _dbManager;
+        private readonly AppDbContext _db;
 
-        public HomeController(AppDbContext db, IDB dbManager)
+        // Main hub linking
+        private readonly IHubContext<MainHub> _hub;
+
+        public HomeController(AppDbContext db, IDB dbManager, IHubContext<MainHub> hub)
         {
-            _db = db;
             _dbManager = dbManager;
+            _db = db;
+            _hub = hub;
         }
 
 
-
+        /*
         //------------------------------------------------------------//
-
-        // Login page block
+        //
+        // REGISTRATION PAGE BLOCK BEGIN
+        //
         // This GET method returns the registration page in order to recieve user data
         [HttpGet]
         public IActionResult Registration()
@@ -62,12 +75,19 @@ namespace GL_PROJ.Controllers
             // Redirect to the main method (GET)
             return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
         }
+        //
+        // REGISTRATION PAGE BLOCK END
+        //
+        //------------------------------------------------------------//
+
+
 
 
 
         //------------------------------------------------------------//
-
-        // Login page block
+        //
+        // LOGIN PAGE BLOCK BEGIN
+        //
         // This GET method returns the login page in order to recieve user data
         [HttpGet]
         public IActionResult Login()
@@ -87,7 +107,7 @@ namespace GL_PROJ.Controllers
                 ViewBag.Error = "Invalid input!";
                 return View(model);
             }
-            /**/
+
             // Find user by name
             var user = _db.Users.FirstOrDefault(u => u.Name == model.UserName);
 
@@ -99,7 +119,7 @@ namespace GL_PROJ.Controllers
             }
 
             // Return the login page with an error
-            if(user.Password != model.Password)
+            if (user.Password != model.Password)
             {
                 ViewBag.Error = "Incorrect password!";
                 return View(model);
@@ -108,36 +128,189 @@ namespace GL_PROJ.Controllers
             // Redirect to the main method (GET)
             return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
         }
+        //
+        // LOGIN PAGE BLOCK END
+        //
+        //------------------------------------------------------------//
+
+
 
 
 
         //------------------------------------------------------------//
-
-        // Main page block
+        //
+        // MAIN PAGE BLOCK BEGIN
+        //
         // This GET method is called via login POST method
         // The metod returns the main page in order to display messages
         [HttpGet]
         public IActionResult Main(int userId, string userName)
         {
+            
             var model = new MainViewModel();
-
-            model.Messages = _db.Messages.Include(m => m.User)
-                .OrderByDescending(m => m.Date)
-                .Take(10).ToArray();
-
+            model.UserId = userId;
+            model.Groups = (from rel in _db.UserGroupRelations
+                            join grp in _db.Groups
+                            on rel.GroupId equals grp.Id
+                            where rel.UserId == userId
+                            select grp)
+                            .ToArray();
+            
+            //return View("Main");
             return View(model);
         }
+        //
+        // MAIN PAGE BLOCK END
+        //
+        //------------------------------------------------------------//
+        
+
 
 
 
         //------------------------------------------------------------//
-
-        // Error response block
-        // Details unknown
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        //
+        // AJAX REQUEST BLOCK BEGIN
+        //
+        // This is an AJAX method for recieving group messages by using groupId (This is not a secure way of requesting data)
+        [HttpPost]
+        public List<MessageDTO> GetMessagesByGroupId(string userId, string groupId)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            try
+            {
+                var res = _db.Messages
+                .Where(m => m.GroupId == int.Parse(groupId))
+                .Select(me => new MessageDTO
+                {
+                    MessageId = me.Id,
+                    Data = me.Data,
+                    Date = me.Date,
+                    Type = me.Type,
+                    UserId = me.UserId,
+                    UserName = me.User.Name,
+                    GroupId = me.GroupId
+                })
+                .ToList();
+
+                return res;
+            }
+            catch (Exception)
+            {
+                Console.Out.WriteLine("Eh...");
+                return null;
+            }
+        }
+        //
+        // AJAX REQUEST BLOCK END
+        //
+        //------------------------------------------------------------//
+        */
+
+        /*
+        //------------------------------------------------------------//
+        //
+        // TESTING BLOCK BEGIN
+        //
+
+        
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View("Index");
+        }
+
+
+
+        // Sign in
+        [HttpPost]
+        public JsonResult Login([FromBody] LogRegDTO lr)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.Name == lr.UserName);
+
+            // User doesn't exist error
+            if (user == null)
+            {
+                return Json(new { code = 0 });
+            }
+
+            // Return the login page with an error
+            if (user.Password != lr.Password)
+            {
+                return Json(new { code = 1 });
+            }
+
+            return Json(new { code = 2, session = "Session string, baby!" });
+        }
+
+        // Sign up
+
+
+        // Get groups
+        [HttpPost]
+        public GroupDTO[] GetGroups([FromBody] string session)
+        {
+            return new GroupDTO[]
+            {
+                new GroupDTO { Id = 1, Name = "First ever!" }
+            };
+        }
+
+        [HttpPost]
+        public MessageDTO[] GetLastXMessages([FromBody] string session, [FromBody] int group_id)
+        {
+            return new MessageDTO[]
+            {
+                new MessageDTO { MessageId = 1, GroupId = 1, UserId = 1, Data = "Hi!", Date = DateTime.Now, Type = 1 }
+            };
+        }
+        
+        [HttpPost]
+        public UserDTO[] GetUsersForGroup([FromBody] string session, [FromBody] int group_id)
+        {
+            return new UserDTO[] 
+            { 
+                new UserDTO { Id = 2, Name = "Dave", Description = "Tis description" },
+                new UserDTO { Id = 3, Name = "Davey", Description = "Tis description2" }
+            };
+        }
+
+
+
+        [HttpPost]
+        public bool CheckSession([FromBody] string session)
+        {
+            return true;
+        }
+        
+
+
+
+        //
+        // ERROR RESPONSE BLOCK END
+        //
+        //------------------------------------------------------------//
+        */
+        
+
+
+        public IActionResult SignIn([FromBody] LogRegDTO lr)
+        {
+            // Find user by name
+            var user = _db.Users.FirstOrDefault(u => u.Name == lr.UserName);
+
+            // User doesn't exist error
+            if (user == null)
+            {
+                return Ok(new { code = 0 });
+            }
+
+            // Return the login page with an error
+            if (user.Password != lr.Password)
+            {
+                return Ok(new { code = 1 });
+            }
+
+            return Ok(new { code = 2, session = "SessionX" });
         }
     }
 }

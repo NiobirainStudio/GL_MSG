@@ -1,0 +1,8 @@
+<form #data="ngForm" (ngSubmit) = "onSubmitLoginForm()" >
+    <h1>Sign in</h1>
+    <input type = "text" name="UserName" [(ngModel)]="UserName">
+    <br/>
+    <input type = "text" name="Password" [(ngModel)]="Password">
+    <br/>
+    <input type = "submit" value = "Sign in">
+</form>

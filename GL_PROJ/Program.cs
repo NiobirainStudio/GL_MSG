@@ -1,20 +1,31 @@
 using GL_PROJ.Data;
 using Microsoft.EntityFrameworkCore;
 using GL_PROJ.Models.DBService;
+using GL_PROJ.AppConfig;
 
 // Buidler initialization
 var builder = WebApplication.CreateBuilder(args);
 
 // Adding all controllers with views
 builder.Services.AddControllersWithViews();
-//adding a service to handle data by means of dependency injection
 
+// Adding a service to handle data by means of dependency injection
 builder.Services.AddTransient<IDB, DB_Manager>();
+
+// Configure session unit
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => false;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services.AddSignalR();
 
 // Connecting a database
 builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration["conStr"])
 );
+
 
 // Building the application
 var app = builder.Build();
@@ -29,15 +40,28 @@ if (!app.Environment.IsDevelopment())
 // Using static files a. k. a. wwwroot files?
 app.UseStaticFiles();
 
+// Using cookie policy
+app.UseCookiePolicy();
+
+
+// Enabling data transfer from "http://localhost:4200"
+app.UseCors(options =>
+    options
+    .WithOrigins("http://localhost:4200")
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
 // Enabling project routing (page request - method link)
 app.UseRouting();
 
-//app.UseAuthorization();
+app.MapDefaultControllerRoute();
 
-// Using the Home controller method Login (GET)
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Login}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<MainHub>("/hub");
+});
 
 // Application lanuch
 app.Run();
