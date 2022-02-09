@@ -31,12 +31,12 @@ export class MainService {
   }
 
   public WriteMessage() {
-    this.hubConnection.invoke('PostMessage', 'fuck you!', 'message_text', 1, 1)
+    this.hubConnection.invoke('PostMessage', 'session!', 'message_text', 1, 1)
       .catch(err => console.log(err));
   }
 
   public AddToGroups() {
-    this.hubConnection.invoke('AddToGroups', 'fuck you!')
+    this.hubConnection.invoke('AddToGroups', 'session!')
       .catch(err => console.log(err));
   }
 
