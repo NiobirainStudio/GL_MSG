@@ -1,6 +1,9 @@
 ﻿using GL_PROJ.Data;
 using GL_PROJ.Models.DbContextModels;
 using Microsoft.EntityFrameworkCore;
+using GL_PROJ.Models;
+using GL_PROJ.Models.DTO;
+using System.Linq;
 
 namespace GL_PROJ.Models.DBService
 {
@@ -11,184 +14,69 @@ namespace GL_PROJ.Models.DBService
         {
             _db = db;
         }
-        /*a method that checks if a user is in the system by comparing the data passed to the method with records in the database*/
-        private bool ContainsUser(User user)
+  
+        /*next three methods work with DTO models*/
+        public GroupDTO[] GetGroupsByUserId(uint user_id)
         {
-            var tmp_user = _db.Users.FirstOrDefault(u => u.Name == user.Name);
-            return tmp_user != null;
-        }
-        /*perhaps this technical method will be useful in some other situations*/
-        /**/
-        private bool ContainsUserByUserID(string UID)
-        {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                var userbyID = _db.Users.SingleOrDefault(u => u.Id == id);
-                return userbyID != null;
-            }
-            return false;
+           var groupIDsbyUserID = _db.UserGroupRelations.Where(relation => relation.UserId == user_id).Select(relation => relation.GroupId);
+           return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
+                Select(group => new GroupDTO { Id = group.Id, Description = group.Description, Name = group.Name }).ToArray();
+
         }
 
-        private bool UserInGroup(int UID, int GID)
+        public UserDTO[] GetUsersByGroupId(uint group_id)
         {
-            var ugr = _db.UserGroupRelations.SingleOrDefault(ugr => ugr.UserId == UID && ugr.GroupId == GID);
-            return ugr != null;
+            var usersIDbyGroupID = _db.UserGroupRelations.Where(relation => relation.GroupId == group_id).Select(relation => relation.UserId);
+            return _db.Users.Where(user => usersIDbyGroupID.Contains(user.Id)).Select(user => new UserDTO { Id = user.Id, Description = user.Description, Name = user.Name }).ToArray();
         }
-        /*creating a user and checking if the user is in the database*/
-        public bool CreateUser(User user)
+        /*ordered by date ascending*/
+        public MessageDTO[] GetMessagesByGroupId(uint group_id)
         {
-            bool res = false;
-            if (!ContainsUser(user))
+            return _db.Messages.Where(message => message.GroupId == group_id).
+                Select(message => new MessageDTO { MessageId = message.Id, GroupId = message.GroupId, Data = message.Data, 
+                    Date = message.Date, Type = message.Type, UserId = message.UserId})
+                .OrderBy(message => message.Date).ToArray();
+        }
+        /*checking methods*/
+        public bool CheckIfInGroup(uint user_id, uint group_id)
+        {
+            var userGroupRelation = _db.UserGroupRelations.FirstOrDefault(relation => relation.UserId == user_id && group_id == relation.GroupId);
+            return userGroupRelation != null;
+        }
+        public uint LeaveGroup(uint user_id, uint group_id)
+        {
+            if (!CheckIfInGroup(user_id, group_id))
             {
-                _db.Users.Add(user);
-                res = true;
+                return 1;
             }
+            _db.UserGroupRelations.Remove(_db.UserGroupRelations.SingleOrDefault(relation => relation.UserId == user_id && relation.GroupId == group_id));
             _db.SaveChanges();
-            return res;
+            return 0;
         }
-        public void CreateGroup(Group group)
+        /*for implementing, high-priority*/
+        public bool CheckIfGroupAdmin(uint user_id, uint group_id)
         {
-            _db.Groups.Add(group);
-            _db.SaveChanges();
-        }
-        /*leaving the group, and checking that the user is in the group*/
-        public bool LeaveGroup(Group group, string UID)
-        {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                if (!UserInGroup(id, group.Id))
-                    return false;
-
-                _db.UserGroupRelations.Remove(
-                    _db.UserGroupRelations.SingleOrDefault(ugr => ugr.UserId == id && ugr.GroupId == group.Id));
-                _db.SaveChanges();
-            }
-            return true;
-        }
-        /*method for a user to leave a group, including checking that the user is in the group*/
-        public bool JoinGroup(Group group, string UID)
-        {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                if (UserInGroup(id, group.Id))
-                    return false;
-                User tmp = _db.Users.Find(id);
-                UserGroupRelation ugr = new UserGroupRelation
-                {
-                    Group = group,
-                    GroupId = group.Id,
-                    Privilege = "user",
-                    User = tmp,
-                    UserId = id
-                };
-                _db.UserGroupRelations.Add(ugr);
-                _db.SaveChanges();
-            }
-            return true;
-        }
-        public void WriteMessage(Message message)
-        {
-            _db.Messages.Add(message);
-            _db.SaveChanges();
-        }
-        /*an async method that checks if a user is in the system by comparing the data passed to the method with records in the database*/
-        private async Task<bool> ContainsUserAsync(User user) 
-        {
-            var tmp_user =  await _db.Users.FirstOrDefaultAsync(u => u.Name == user.Name);
-            return tmp_user != null;
-        }
-        /*perhaps this technical method will be useful in some other situations*/
-        /**/
-        private async Task<bool> ContainsUserByUserIDAsync(string UID)
-        {
-            int id;
-            if(int.TryParse(UID, out id))
-            {
-                var userbyID = await  _db.Users.SingleOrDefaultAsync(u => u.Id == id);
-                return userbyID != null;
-            }
-            return false;
+            throw new NotImplementedException();
         }
 
-        private async  Task<bool> UserInGroupAsync(int UID, int GID)
+        public uint CreateUser(string username, string password, string description)
         {
-            var ugr = await _db.UserGroupRelations.SingleOrDefaultAsync(ugr => ugr.UserId == UID && ugr.GroupId == GID);
-            return ugr != null;
+            throw new NotImplementedException();
         }
-        /* async creating a user and checking if the user is in the database*/
-        public async  Task<bool> CreateUserAsync(User user)
-        {
-            bool res = false;
-            if (!await ContainsUserAsync(user))
-            {
-                await _db.Users.AddAsync(user);
-                res = true;
-            }
-            await _db.SaveChangesAsync();
-            return res;
-        }
-        public async Task CreateGroupAsync(Group group)
-        {
-             await _db.Groups.AddAsync(group);
-             await _db.SaveChangesAsync();
-        }
-        /* async leaving the group, and checking that the user is in the group*/
-        public async Task<bool> LeaveGroupAsync(Group group, string UID)
-        {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                if (!await UserInGroupAsync(id, group.Id))
-                    return false;
 
-                _db.UserGroupRelations.Remove(
-                     await _db.UserGroupRelations.SingleOrDefaultAsync(ugr => ugr.UserId == id && ugr.GroupId == group.Id));
-                 await  _db.SaveChangesAsync();
-            }
-            return true;
-        }
-        /* async method for a user to leave a group, including checking that the user is in the group*/
-        public async Task<bool> JoinGroupAsync(Group group, string UID)
+        public uint CreateGroup(uint user_id, string name, string description)
         {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                if (await UserInGroupAsync(id, group.Id))
-                    return false;
-                User tmp = _db.Users.Find(id);
-                UserGroupRelation ugr = new UserGroupRelation
-                {
-                    Group = group,
-                    GroupId = group.Id,
-                    Privilege = "user",
-                    User = tmp,
-                    UserId = id
-                };
-                await _db.UserGroupRelations.AddAsync(ugr);
-                await _db.SaveChangesAsync();
-            }
-            return true;
+            throw new NotImplementedException();
         }
-        public async Task WriteMessageAsync(Message message)
-        {
-            await _db.Messages.AddAsync(message);
-            await _db.SaveChangesAsync();
-        }
-        /*in the method get the group ID for a specific userID, and then retrieve a list of groups from the "Groups" table according to this ID*/
 
-        public List<Group> GroupByUID(string UID)
+        public uint CreateMessage(uint user_id, uint group_id, string data, uint type)
         {
-            int[] groud_ids = _db.UserGroupRelations.Where(r => r.UserId.ToString() == UID).Select(rel => rel.GroupId).ToArray();
-            return _db.Groups.Where(g => groud_ids.Contains(g.Id)).ToList();
+            throw new NotImplementedException();
         }
-        /*method for retrieving a list of messages according to an incoming group ID*/
-        public List<Message> MessagesByGID(string GID)
-        {
 
-            return _db.Messages.Where(m => m.GroupId.ToString() == GID).ToList();
+        public uint JoinGroup(uint user_id, uint group_id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

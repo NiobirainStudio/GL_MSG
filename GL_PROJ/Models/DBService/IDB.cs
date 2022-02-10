@@ -4,36 +4,21 @@ using GL_PROJ.Models.DTO;
 namespace GL_PROJ.Models.DBService
 {
     public interface IDB
-    {
-        void CreateUser(User user) { }
+    {     
+        GroupDTO[] GetGroupsByUserId(uint user_id);
+        UserDTO[] GetUsersByGroupId(uint group_id);
+        MessageDTO[] GetMessagesByGroupId(uint group_id);
+        uint LeaveGroup(uint user_id, uint group_id);
+        bool CheckIfInGroup(uint user_id, uint group_id);
 
-        //void DeleteUser(User user) { }
+        bool CheckIfGroupAdmin(uint user_id, uint group_id);
 
-        void CreateGroup(Group group) { }
+        uint CreateUser(string username, string password, string description);
 
-        //void DeleteGroup(Group group) { }
+        uint CreateGroup(uint user_id, string name, string description);
+        uint CreateMessage(uint user_id, uint group_id, string data, uint type);
 
-        void LeaveGroup(Group group, string UID) { }
+        uint JoinGroup(uint user_id, uint group_id);
 
-        void JoinGroup(Group group, string UID) { }
-
-        void WriteMessage(Message message) { }
-        void CreateUserAsync(User user) { }
-
-        //void DeleteUser(User user) { }
-
-        void CreateGroupAsync(Group group) { }
-
-        //void DeleteGroup(Group group) { }
-
-        void LeaveGroupAsync(Group group, string UID) { }
-
-        void JoinGroupAsync(Group group, string UID) { }
-
-        void WriteMessageAsync(Message message) { }
-
-        public List<Group> GroupsByUID(string UID) { return null; }
-
-        public List<Message> MessagesByGID(string GID) { return null; }
     }
 }
