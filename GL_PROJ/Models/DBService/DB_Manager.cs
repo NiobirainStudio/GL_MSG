@@ -18,7 +18,7 @@ namespace GL_PROJ.Models.DBService
         /*next three methods work with DTO models*/
         public GroupDTO[] GetGroupsByUserId(uint user_id)
         {
-           var groupIDsbyUserID = _db.UserGroupRelations.Where(relation => relation.UserId == user_id).Select(relation => relation.GroupId);
+            var groupIDsbyUserID = GetGroupIdsByUserId(user_id);
            return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
                 Select(group => new GroupDTO { Id = group.Id, Description = group.Description, Name = group.Name }).ToArray();
 
@@ -53,6 +53,10 @@ namespace GL_PROJ.Models.DBService
             _db.SaveChanges();
             return 0;
         }
+        public int[] GetGroupIdsByUserId(uint user_id) /*этот метод пришлось сделать интом, а то нормально не конвертируется в uint*/
+        {
+            return _db.UserGroupRelations.Where(relation => relation.UserId == user_id).Select(relation => relation.GroupId).ToArray();
+        }
         /*for implementing, high-priority*/
         public bool CheckIfGroupAdmin(uint user_id, uint group_id)
         {
@@ -75,6 +79,42 @@ namespace GL_PROJ.Models.DBService
         }
 
         public uint JoinGroup(uint user_id, uint group_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*low-priority-methods*/
+        public uint DeleteUser(uint user_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditUser(uint user_id, string username, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint DeleteGroup(uint user_id, uint group_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditGroup(uint user_id, uint group_id, string name, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint DeleteMessage(uint user_id, uint message_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditMessage(uint user_id, uint message_id, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditPrivilege(uint user_id, uint target_user_id, uint group_id, uint new_privilege)
         {
             throw new NotImplementedException();
         }
