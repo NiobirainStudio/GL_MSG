@@ -16,5 +16,10 @@ namespace GL_PROJ.Models.DBService
         {
             return true;
         }
+        //TODO
+        public bool MessageTypeValid(uint type)
+        {
+            return true;
+        }
     }
 }
