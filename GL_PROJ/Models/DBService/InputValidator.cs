@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.RegularExpressions;
+
 namespace GL_PROJ.Models.DBService
 {
     public class InputValidator
@@ -9,7 +11,7 @@ namespace GL_PROJ.Models.DBService
         //TODO add regex validation
         public bool PasswordValid(string passwd)
         {
-            return true;
+            return Regex.IsMatch(passwd, "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
         }
         //TODO add regex validation
         public bool UsernameValid(string username)

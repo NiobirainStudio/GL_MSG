@@ -18,6 +18,12 @@ namespace GL_PROJ.Models.DBService
             IV = new InputValidator();
         }
 
+        private MessageDTO LastGroupMessage(uint GID)
+        {
+            var msg_list = GetMessagesByGroupId(GID).ToList();
+            msg_list.OrderBy(m => m.Date);
+            return msg_list[msg_list.Count - 1];
+        }
         private bool ContainsUserByUserID(int UID)
         {
                 var userbyID = _db.Users.SingleOrDefault(u => u.Id == UID);
@@ -44,7 +50,13 @@ namespace GL_PROJ.Models.DBService
         {
             var groupIDsbyUserID = GetGroupIdsByUserId(user_id);
            return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
-                Select(group => new GroupDTO { Id = group.Id, Description = group.Description, Name = group.Name }).ToArray();
+                Select(group => new GroupDTO
+                {
+                    Id = group.Id,
+                    Description = group.Description,
+                    Name = group.Name,
+                    LastMessage = LastGroupMessage((uint)group.Id)
+                }).ToArray();
 
         }
 
