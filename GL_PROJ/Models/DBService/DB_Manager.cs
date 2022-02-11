@@ -4,17 +4,41 @@ using Microsoft.EntityFrameworkCore;
 using GL_PROJ.Models;
 using GL_PROJ.Models.DTO;
 using System.Linq;
+using System;
 
 namespace GL_PROJ.Models.DBService
 {
     public class DB_Manager: IDB
     {
         private readonly AppDbContext _db;
+        private InputValidator IV;
         public DB_Manager(AppDbContext db)
         {
             _db = db;
+            IV = new InputValidator();
         }
-  
+
+        private bool ContainsUserByUserID(int UID)
+        {
+                var userbyID = _db.Users.SingleOrDefault(u => u.Id == UID);
+                return userbyID != null;
+        }
+        //questionable solution
+        private void MakeAdmin(int UID, int GID)
+        {
+            var UGR = _db.UserGroupRelations.Find(UID, GID);
+            if (UGR != null)
+            {
+                UGR.Privilege = "admin";
+                _db.SaveChanges();
+            }
+                
+        }
+        private Group GroupByName(string name)
+        {
+            return _db.Groups.FirstOrDefault(g => g.Name == name); 
+        }
+
         /*next three methods work with DTO models*/
         public GroupDTO[] GetGroupsByUserId(uint user_id)
         {
@@ -38,10 +62,11 @@ namespace GL_PROJ.Models.DBService
                 .OrderBy(message => message.Date).ToArray();
         }
         /*checking methods*/
+        //return true if in group?
         public bool CheckIfInGroup(uint user_id, uint group_id)
         {
-            var userGroupRelation = _db.UserGroupRelations.FirstOrDefault(relation => relation.UserId == user_id && group_id == relation.GroupId);
-            return userGroupRelation != null;
+            var UGR = _db.UserGroupRelations.Find(user_id, group_id);
+            return UGR != null;
         }
         public uint LeaveGroup(uint user_id, uint group_id)
         {
@@ -65,22 +90,92 @@ namespace GL_PROJ.Models.DBService
 
         public uint CreateUser(string username, string password, string description)
         {
-            throw new NotImplementedException();
+            uint res = 0;
+            if (username == null || username == "")
+                res = 1;
+            else if (_db.Users.SingleOrDefault(u => u.Name == username) != null)
+                res = 2;
+            else if (!IV.UsernameValid(username))
+                res = 3;
+            else if (password == null || password == "")
+                res = 4;
+            else if (!IV.PasswordValid(password))
+                res = 5;
+            if (res == 0)
+            {
+                _db.Users.Add(new User {
+                    Name = username,
+                    Password = password,
+                    Description = description
+                });
+                _db.SaveChanges();
+            }
+            return res;
         }
 
         public uint CreateGroup(uint user_id, string name, string description)
         {
-            throw new NotImplementedException();
-        }
+            uint res = 0;
+            if (GroupByName(name) != null)
+                res = 1;
+            else if (name == null || name == "")
+                res = 2;
+            if(res == 0)
+            {
+                _db.Groups.Add(new Group
+                {
+                    Name = name,
+                    Description = description
+                });
+                _db.SaveChanges();
+                int groupid = GroupByName(name).Id;
+                JoinGroup(user_id, (uint)groupid);
+                MakeAdmin((int)user_id, groupid);
+            }
+            return res;
 
+        }
+        //TODO add invalid type check
         public uint CreateMessage(uint user_id, uint group_id, string data, uint type)
         {
-            throw new NotImplementedException();
+            uint res = 0;
+            if (!CheckIfInGroup(user_id, group_id))
+                res = 1;
+            else if (data == null || data == "")
+                res = 2;
+            else if (IV.MessageTypeValid(type))
+                res = 3;
+            if(res == 0)
+            {
+                _db.Messages.Add(new Message
+                {
+                    Data = data,
+                    Date = DateTime.Now,
+                    Type = (int)type,
+                    UserId = (int)user_id,
+                    GroupId = (int)group_id
+                });
+                _db.SaveChanges();
+            }
+            return res;
         }
 
         public uint JoinGroup(uint user_id, uint group_id)
         {
-            throw new NotImplementedException();
+            uint res = 0;
+            if (CheckIfInGroup(user_id,group_id))
+                res = 1;
+            else
+            {
+                _db.UserGroupRelations.Add(new UserGroupRelation
+                {
+                    UserId = (int)user_id,
+                    GroupId = (int)group_id,
+                    Privilege = "user"
+                });
+                _db.SaveChanges();
+            }
+            return res;
         }
 
         /*low-priority-methods*/
