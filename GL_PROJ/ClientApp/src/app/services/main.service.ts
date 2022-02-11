@@ -11,37 +11,66 @@ export class MainService {
   public data: string;
   public broadcast_data: string;
 
+  readonly URL = 'https://localhost:7047/Home';
+
   private hubConnection: signalR.HubConnection;
 
-  public startConnectionPoke() {
+  constructor(private http: HttpClient) { }
+
+  public StartConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .withUrl('https://localhost:7047/hub')
       .build();
 
-    this.hubConnection
+      this.hubConnection
       .start()
-      .then(() => console.log('Connection started!'))
+      .then(() => { 
+        console.log('Connection started!');
+        this.OnConnectionStart();
+      })
       .catch(err => console.log('Error while connecting to hub ' + err));
   }
 
-  public addBroadcastListener() {
-    this.hubConnection.on('GroupGlobal', (data) => {
+
+  private OnConnectionStart() {
+    // Setup listeners
+    this.ListenOnMessages();
+
+
+    // Conncet to SignalR server groups
+    setTimeout(() => { this.StartGroupChannel(+(localStorage.getItem("UserSession") || -1)) }, 1000);
+  }
+
+  // Reconnect on losing connection
+  public OnReconnectedEvent(){
+    this.hubConnection.onreconnected(() => {
+      console.log("Reconnected!");
+      this.OnConnectionStart();
+    });
+  }
+
+  // Listeners
+  public ListenOnMessages() {
+    this.hubConnection.on('GroupMessages', (data) => {
       console.log(data);
     });
   }
 
-  public WriteMessage() {
-    this.hubConnection.invoke('PostMessage', 'session!', 'message_text', 1, 1)
-      .catch(err => console.log(err));
-  }
 
-  public AddToGroups() {
-    this.hubConnection.invoke('AddToGroups', 'session!')
-      .catch(err => console.log(err));
+  // Join SignalR channels
+  public StartGroupChannel(user_id: number) {
+    this.hubConnection.invoke('AddToGroups', user_id)
+      .catch(err => console.log("StartGroupChannel " + err));
   }
 
 
-  constructor(private http:HttpClient) { }
+  // Send data
+  public SendTextMessage(user_id: number, message_data: string, group_id: number) {
+    this.hubConnection.invoke('PostMessage', user_id, message_data, 1, group_id)
+      .catch(err => console.log("SendMessage " + err));
+  }
 
   /*
   // Request and send data to server
@@ -56,5 +85,13 @@ export class MainService {
   }
   */
 
-
+  public PostAndRecieveData(data: number, url: string) {
+    return this.http.post<any>(
+      this.URL + url,
+      JSON.stringify(data),
+      { headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
 }

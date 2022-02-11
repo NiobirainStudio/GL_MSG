@@ -293,7 +293,15 @@ namespace GL_PROJ.Controllers
         //------------------------------------------------------------//
         */
         
-
+        public IActionResult GetUserGroups([FromBody] int user_id)
+        {
+            return Ok(new { groups = (from rel in _db.UserGroupRelations
+                                      join grp in _db.Groups
+                                      on rel.GroupId equals grp.Id
+                                      where rel.UserId == user_id
+                                      select grp).ToArray()
+            });
+        }
 
         public IActionResult SignIn([FromBody] LogRegDTO lr)
         {
@@ -312,7 +320,7 @@ namespace GL_PROJ.Controllers
                 return Ok(new { code = 1 });
             }
 
-            return Ok(new { code = 2, session = "SessionX" });
+            return Ok(new { code = 2, id = user.Id });
         }
     }
 }

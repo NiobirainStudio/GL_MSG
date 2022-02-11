@@ -17,64 +17,16 @@ export class MainComponent implements OnInit {
   constructor(public service: MainService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.service.startConnectionPoke();
-
-    this.service.addBroadcastListener();
-
-    //this.startHttpRequest();
+    this.service.StartConnection();
+    this.service.OnReconnectedEvent();
   }
 
-  public WriteMessage() {
-    this.service.WriteMessage();
+  WriteMessage() {
+    this.service.SendTextMessage(this.GetSession(), "I'm a new message!", 1);
   }
 
-  public AddToGroups() {
-    this.service.AddToGroups();
-  }
-
-  /*
-  private startHttpRequest = () => {
-    this.http.get('https://localhost:7047/home/pinger')
-      .subscribe(res => {
-        console.log(res);
-      })
-  }
-  */
-
-  /*
-  // DATA STORAGE NAMING CONVENTION DCV-1
-  // - Storing data separately
-  // - user syntax:
-  //   u-<user_id>
-  // - group syntax:
-  //   g-<group_id>
-  // - message syntax:
-  // - m-<group_id>
-
-
-  // Request all groups for the user
-  requestAllUserGroups() {
-    var session = sessionStorage.getItem("UserSession");
-    
-    this.service.requestData<GroupDTO[]>(JSON.stringify(session), '/GetGroups').subscribe(
-      res => {
-        console.log(res);
-
-        res.forEach(element => {
-          localStorage.setItem('g-' + element.Id, JSON.stringify(element))
-        });
-      },
-      err => { 
-        console.log(err); 
-      }
-    );
-  }
-
-  // Request last X messages of a specific group
-  requestLastXMessagesForGroup(id: number) {
-    var session = JSON.stringify(sessionStorage.getItem("UserSession"));
-
-    this.service.requestData<MessageDTO[]>(JSON.stringify({session, id}), '/GetLastXMessages').subscribe(
+  GetGroups() {
+    this.service.PostAndRecieveData(this.GetSession(), '/GetUserGroups').subscribe(
       res => {
         console.log(res);
       },
@@ -84,24 +36,7 @@ export class MainComponent implements OnInit {
     );
   }
 
-  // Request user data for this group
-  requestUserDataForGroup(id: number){
-    var session = JSON.stringify(sessionStorage.getItem("UserSession"));
-
-    this.service.requestData<UserDTO[]>(JSON.stringify({session, id}), '/GetUsersForGroup').subscribe(
-      res => {
-        console.log(res);
-      },
-      err => { 
-        console.log(err); 
-      }
-    );
+  private GetSession() {
+    return (+(localStorage.getItem("UserSession") || -1));
   }
-
-  //------------------------------------------------------------//
-  //
-  // Access methods
-  //
-  // x
-  */
 }
