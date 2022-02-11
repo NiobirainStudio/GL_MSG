@@ -85,7 +85,8 @@ namespace GL_PROJ.Models.DBService
         /*for implementing, high-priority*/
         public bool CheckIfGroupAdmin(uint user_id, uint group_id)
         {
-            throw new NotImplementedException();
+            var UGR = _db.UserGroupRelations.Find(user_id, group_id);
+            return UGR.Privilege == "admin";
         }
 
         public uint CreateUser(string username, string password, string description)
