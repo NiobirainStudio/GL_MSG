@@ -46,27 +46,39 @@ namespace GL_PROJ.Models.DBService
         }
 
         /*next three methods work with DTO models*/
-        public GroupDTO[] GetGroupsByUserId(uint user_id)
+        public GroupDTO[] GetGroupsByUserId(uint user_id) /*работает*/
         {
             var groupIDsbyUserID = GetGroupIdsByUserId(user_id);
-           return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
-                Select(group => new GroupDTO
+            var groupMessages = _db.Messages.Where(message => groupIDsbyUserID.Contains(message.GroupId)).
+                Select(message => new MessageDTO
                 {
-                    Id = group.Id,
-                    Description = group.Description,
-                    Name = group.Name,
-                    LastMessage = LastGroupMessage((uint)group.Id)
-                }).ToArray();
+                    MessageId = message.Id,
+                    GroupId = message.GroupId,
+                    Data = message.Data,
+                    Date = message.Date,
+                    Type = message.Type,
+                    UserId = message.UserId
+                }).OrderBy(message => message.Date).ToList();
+
+            MessageDTO lastMessage = groupMessages[groupMessages.Count - 1];
+            return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
+                 Select(group => new GroupDTO
+                 {
+                     Id = group.Id,
+                     Description = group.Description,
+                     Name = group.Name,
+                     LastMessage = lastMessage
+                 }).ToArray();
 
         }
 
-        public UserDTO[] GetUsersByGroupId(uint group_id)
+        public UserDTO[] GetUsersByGroupId(uint group_id) /*работает*/
         {
             var usersIDbyGroupID = _db.UserGroupRelations.Where(relation => relation.GroupId == group_id).Select(relation => relation.UserId);
             return _db.Users.Where(user => usersIDbyGroupID.Contains(user.Id)).Select(user => new UserDTO { Id = user.Id, Description = user.Description, Name = user.Name }).ToArray();
         }
         /*ordered by date ascending*/
-        public MessageDTO[] GetMessagesByGroupId(uint group_id)
+        public MessageDTO[] GetMessagesByGroupId(uint group_id) /*работает*/
         {
             return _db.Messages.Where(message => message.GroupId == group_id).
                 Select(message => new MessageDTO { MessageId = message.Id, GroupId = message.GroupId, Data = message.Data, 
