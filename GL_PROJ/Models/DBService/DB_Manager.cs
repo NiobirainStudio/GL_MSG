@@ -18,12 +18,12 @@ namespace GL_PROJ.Models.DBService
             IV = new InputValidator();
         }
 
-        private MessageDTO LastGroupMessage(uint GID)
+     /*   private MessageDTO LastGroupMessage(uint GID)
         {
             var msg_list = GetMessagesByGroupId(GID).ToList();
             msg_list.OrderBy(m => m.Date);
             return msg_list[msg_list.Count - 1];
-        }
+        }*/
         private bool ContainsUserByUserID(int UID)
         {
                 var userbyID = _db.Users.SingleOrDefault(u => u.Id == UID);
