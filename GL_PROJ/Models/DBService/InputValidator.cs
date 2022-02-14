@@ -18,6 +18,11 @@ namespace GL_PROJ.Models.DBService
         {
             return true;
         }
+        //TODO add regex validation
+        public bool GroupnameValid(string groupname)
+        {
+            return true;
+        }
         //TODO
         public bool MessageTypeValid(uint type)
         {
