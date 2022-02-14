@@ -1,110 +1,250 @@
 ﻿using GL_PROJ.Data;
 using GL_PROJ.Models.DbContextModels;
+using Microsoft.EntityFrameworkCore;
+using GL_PROJ.Models;
+using GL_PROJ.Models.DTO;
+using System.Linq;
+using System;
 
 namespace GL_PROJ.Models.DBService
 {
-    public class DB_Manager: IDB
+    public class DB_Manager : IDB
     {
         private readonly AppDbContext _db;
+        private InputValidator IV;
         public DB_Manager(AppDbContext db)
         {
             _db = db;
-        }
-        /*a method that checks if a user is in the system by comparing the data passed to the method with records in the database*/
-        private bool ContainsUser(User user) 
-        {
-            var tmp_user = _db.Users.FirstOrDefault(u => u.Name == user.Name);
-            return tmp_user != null;
-        }
-        /*perhaps this technical method will be useful in some other situations*/
-        /**/
-        private bool ContainsUserByUserID(string UID)
-        {
-            int id;
-            if(int.TryParse(UID, out id))
-            {
-                var userbyID = _db.Users.SingleOrDefault(u => u.Id == id);
-                return userbyID != null;
-            }
-            return false;
+            IV = new InputValidator();
         }
 
-        private bool UserInGroup(int UID, int GID)
+        /*   private MessageDTO LastGroupMessage(uint GID)
+           {
+               var msg_list = GetMessagesByGroupId(GID).ToList();
+               msg_list.OrderBy(m => m.Date);
+               return msg_list[msg_list.Count - 1];
+           }*/
+        private bool ContainsUserByUserID(int UID)
         {
-            var ugr = _db.UserGroupRelations.SingleOrDefault(ugr => ugr.UserId == UID && ugr.GroupId == GID);
-            return ugr != null;
+            var userbyID = _db.Users.SingleOrDefault(u => u.Id == UID);
+            return userbyID != null;
         }
-        /*creating a user and checking if the user is in the database*/
-        public bool CreateUser(User user)
+        //questionable solution
+        private void MakeAdmin(int UID, int GID)
         {
-            bool res = false;
-            if (!ContainsUser(user))
+            var UGR = _db.UserGroupRelations.Find(UID, GID);
+            if (UGR != null)
             {
-                _db.Users.Add(user);
-                res = true;
+                UGR.Privilege = "admin";
+                _db.SaveChanges();
             }
+
+        }
+        private Group GroupByName(string name)
+        {
+            return _db.Groups.FirstOrDefault(g => g.Name == name);
+        }
+
+        /*next three methods work with DTO models*/
+        public GroupDTO[] GetGroupsByUserId(uint user_id) /*работает*/
+        {
+            var groupIDsbyUserID = GetGroupIdsByUserId(user_id);
+            var groupMessages = _db.Messages.Where(message => groupIDsbyUserID.Contains(message.GroupId)).
+                Select(message => new MessageDTO
+                {
+                    MessageId = message.Id,
+                    GroupId = message.GroupId,
+                    Data = message.Data,
+                    Date = message.Date,
+                    Type = message.Type,
+                    UserId = message.UserId
+                }).OrderBy(message => message.Date).ToList();
+
+            MessageDTO lastMessage = groupMessages[groupMessages.Count - 1];
+            return _db.Groups.Where(group => groupIDsbyUserID.Contains(group.Id)).
+                 Select(group => new GroupDTO
+                 {
+                     Id = group.Id,
+                     Description = group.Description,
+                     Name = group.Name,
+                     LastMessage = lastMessage
+                 }).ToArray();
+
+        }
+
+        public UserDTO[] GetUsersByGroupId(uint group_id) /*работает*/
+        {
+            var usersIDbyGroupID = _db.UserGroupRelations.Where(relation => relation.GroupId == group_id).Select(relation => relation.UserId);
+            return _db.Users.Where(user => usersIDbyGroupID.Contains(user.Id)).Select(user => new UserDTO { Id = user.Id, Description = user.Description, Name = user.Name }).ToArray();
+        }
+        /*ordered by date ascending*/
+        public MessageDTO[] GetMessagesByGroupId(uint group_id) /*работает*/
+        {
+            return _db.Messages.Where(message => message.GroupId == group_id).
+                Select(message => new MessageDTO
+                {
+                    MessageId = message.Id,
+                    GroupId = message.GroupId,
+                    Data = message.Data,
+                    Date = message.Date,
+                    Type = message.Type,
+                    UserId = message.UserId
+                })
+                .OrderBy(message => message.Date).ToArray();
+        }
+        /*checking methods*/
+        //return true if in group?
+        public bool CheckIfInGroup(uint user_id, uint group_id)
+        {
+            var UGR = _db.UserGroupRelations.Find(user_id, group_id);
+            return UGR != null;
+        }
+        public uint LeaveGroup(uint user_id, uint group_id)
+        {
+            if (!CheckIfInGroup(user_id, group_id))
+            {
+                return 1;
+            }
+            _db.UserGroupRelations.Remove(_db.UserGroupRelations.SingleOrDefault(relation => relation.UserId == user_id && relation.GroupId == group_id));
             _db.SaveChanges();
+            return 0;
+        }
+        public int[] GetGroupIdsByUserId(uint user_id) /*этот метод пришлось сделать интом, а то нормально не конвертируется в uint*/
+        {
+            return _db.UserGroupRelations.Where(relation => relation.UserId == user_id).Select(relation => relation.GroupId).ToArray();
+        }
+        /*for implementing, high-priority*/
+        public bool CheckIfGroupAdmin(uint user_id, uint group_id)
+        {
+            var UGR = _db.UserGroupRelations.Find(user_id, group_id);
+            return UGR.Privilege == "admin";
+        }
+
+        public uint CreateUser(string username, string password, string description)
+        {
+            uint res = 0;
+            if (username == null || username == "")
+                res = 1;
+            else if (_db.Users.SingleOrDefault(u => u.Name == username) != null)
+                res = 2;
+            else if (!IV.UsernameValid(username))
+                res = 3;
+            else if (password == null || password == "")
+                res = 4;
+            else if (!IV.PasswordValid(password))
+                res = 5;
+            if (res == 0)
+            {
+                _db.Users.Add(new User
+                {
+                    Name = username,
+                    Password = password,
+                    Description = description
+                });
+                _db.SaveChanges();
+            }
             return res;
         }
-        public void CreateGroup(Group group)
-        {
-            _db.Groups.Add(group);
-            _db.SaveChanges();
-        }
-        /*leaving the group, and checking that the user is in the group*/
-        public bool LeaveGroup(Group group, string UID)
-        {
-            int id;
-            if (int.TryParse(UID, out id))
-            {
-                if (!UserInGroup(id, group.Id))
-                    return false;
 
-                _db.UserGroupRelations.Remove(
-                    _db.UserGroupRelations.SingleOrDefault(ugr => ugr.UserId == id && ugr.GroupId == group.Id));
-                _db.SaveChanges();
-            }
-            return true;
-        }
-        /*method for a user to leave a group, including checking that the user is in the group*/
-        public bool JoinGroup(Group group, string UID)
+        public uint CreateGroup(uint user_id, string name, string description)
         {
-            int id;
-            if (int.TryParse(UID, out id))
+            uint res = 0;
+            if (GroupByName(name) != null)
+                res = 1;
+            else if (name == null || name == "")
+                res = 2;
+            if (res == 0)
             {
-                if (UserInGroup(id, group.Id))
-                    return false;
-                User tmp = _db.Users.Find(id);
-                UserGroupRelation ugr = new UserGroupRelation
+                _db.Groups.Add(new Group
                 {
-                    Group = group,
-                    GroupId = group.Id,
-                    Privilege = "user",
-                    User = tmp,
-                    UserId = id
-                };
-                _db.UserGroupRelations.Add(ugr);
+                    Name = name,
+                    Description = description
+                });
+                _db.SaveChanges();
+                int groupid = GroupByName(name).Id;
+                JoinGroup(user_id, (uint)groupid);
+                MakeAdmin((int)user_id, groupid);
+            }
+            return res;
+
+        }
+        //TODO add invalid type check
+        public uint CreateMessage(uint user_id, uint group_id, string data, uint type)
+        {
+            uint res = 0;
+            if (!CheckIfInGroup(user_id, group_id))
+                res = 1;
+            else if (data == null || data == "")
+                res = 2;
+            else if (IV.MessageTypeValid(type))
+                res = 3;
+            if (res == 0)
+            {
+                _db.Messages.Add(new Message
+                {
+                    Data = data,
+                    Date = DateTime.Now,
+                    Type = (int)type,
+                    UserId = (int)user_id,
+                    GroupId = (int)group_id
+                });
                 _db.SaveChanges();
             }
-            return true;
+            return res;
         }
-        public void WriteMessage(Message message)
-        {
-            _db.Messages.Add(message);
-            _db.SaveChanges();
-        }
-        /*in the method get the group ID for a specific userID, and then retrieve a list of groups from the "Groups" table according to this ID*/
 
-        public List<Group> GroupByUID(string UID)
+        public uint JoinGroup(uint user_id, uint group_id)
         {
-            int[] groud_ids = _db.UserGroupRelations.Where(r => r.UserId.ToString() == UID).Select(rel => rel.GroupId).ToArray();
-            return _db.Groups.Where(g => groud_ids.Contains(g.Id)).ToList();
+            uint res = 0;
+            if (CheckIfInGroup(user_id, group_id))
+                res = 1;
+            else
+            {
+                _db.UserGroupRelations.Add(new UserGroupRelation
+                {
+                    UserId = (int)user_id,
+                    GroupId = (int)group_id,
+                    Privilege = "user"
+                });
+                _db.SaveChanges();
+            }
+            return res;
         }
-        /*method for retrieving a list of messages according to an incoming group ID*/
-        public List<Message> MessagesByGID(string GID)
-        {
 
-            return _db.Messages.Where(m => m.GroupId.ToString() == GID).ToList();
+        /*low-priority-methods*/
+        public uint DeleteUser(uint user_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditUser(uint user_id, string username, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint DeleteGroup(uint user_id, uint group_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditGroup(uint user_id, uint group_id, string name, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint DeleteMessage(uint user_id, uint message_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditMessage(uint user_id, uint message_id, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint EditPrivilege(uint user_id, uint target_user_id, uint group_id, uint new_privilege)
+        {
+            throw new NotImplementedException();
         }
     }
 }

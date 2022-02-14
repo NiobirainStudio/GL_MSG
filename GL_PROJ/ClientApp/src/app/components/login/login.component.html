@@ -1,8 +1,25 @@
-<form #data="ngForm" (ngSubmit) = "onSubmitLoginForm()" >
-    <h1>Sign in</h1>
-    <input type = "text" name="UserName" [(ngModel)]="UserName">
-    <br/>
-    <input type = "text" name="Password" [(ngModel)]="Password">
-    <br/>
-    <input type = "submit" value = "Sign in">
-</form>
+<form action="#" method="post">
+    <h2 class="title">Login</h2>
+          <!--<p>
+              <label for="Email" class="floatLabel">Email</label>
+              <input id="Email" name="Email" type="text">
+          </p>-->
+          <p>
+              <label for="User" class="floatLabel">Username</label>
+              <input id="Username" name="Username" type="text">
+              <!--<span>Enter a password longer than 8 characters</span>-->
+          </p>
+          <p>
+              <label for="password" class="floatLabel">Password</label>
+              <input id="Password" name="Password" type="text">
+              <!--<span>Your passwords do not match</span>-->
+          </p>
+          <p>
+              <input type="submit" value="Login" id="submit">
+
+          </p>
+         
+          <a href="/Registration"><h2 class="login">Create my account</h2></a>
+           
+      </form>
+      

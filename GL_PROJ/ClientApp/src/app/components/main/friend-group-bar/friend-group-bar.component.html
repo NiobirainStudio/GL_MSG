@@ -1,0 +1,14 @@
+<div class="contact_bar" [id]="friendOrGroupData.id" (click)="onClick()">
+    <div class="contactBar_avatar">
+        
+    </div>
+  <div class="contactInfo">
+      <div class="contactInfo_header">
+            <div class="contactInfo_header_contactName">{{ friendOrGroupData.name }}</div>
+            
+            <div class="contactInfo_header_contactLastMessageTime"> {{ friendOrGroupData.lastMessage.date }} </div>
+            
+        </div>
+        <div class="contactInfo_contactLastMessage">{{ friendOrGroupData.lastMessage.data }}</div>
+    </div>
+</div>

@@ -1,0 +1,648 @@
+@charset "UTF-8";
+/* Body */
+body {
+    font-family: source-sans-pro;
+
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    font-style: normal;
+    width: max;
+    max-width: inherit;
+    height: max;
+    overflow-y: hidden;
+}
+.left_header_menuAndSearch {
+    width: 100%;
+
+    height: 50px;
+}
+.left_main_colum {
+    width: 30%;
+    height: 100vmax;
+    border-right: 1px solid #B8B8B8;
+    float: left;
+    min-width: 250px;
+    max-width: 400px;
+    background-color: white;
+
+}
+.main_container {
+
+}
+
+.right_main_colum {
+    height: 100vmax;
+    flex-direction: column;
+    background-image: url("Data/background.png");
+}
+.left_header_menuAndSearch_searchInput   {
+    height: 27px;
+    display: inline-block;
+    width: 70%;
+}
+.addFileButton_bar {
+    padding-right: 5%;
+    display: inline-flex;
+    font-size: 28px;
+    margin-bottom: auto;
+}
+
+
+
+.menu_icon {
+    width: 20%;
+    float: left;
+}
+.menu_img {
+    width: 30px;
+    height: 30px;
+}
+.search_input {
+    height: 27px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.left_header_menuAndSearch_menu_iconAliner {
+    height: 20px;
+    display: inline-block;
+    width: 20%;
+    text-align: center;
+    margin-top: 15px;
+    min-height: 30px;
+}
+.menu_button {
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.left_header_communicationBar_addGroupButton {
+    display: inline-block;
+    font-size: 25px;
+    text-align: center;
+    width: 49%;
+    outline-offset: -5px;
+
+}
+
+.left_header_communicationBar_addContactButton {
+    font-size: 21px;
+    display: inline-block;
+    text-align: center;
+    width: 49%;
+}
+.left_header_communication_bar {
+    color: #478A6D;
+
+}
+.left_header_menuAndSearch_menubutton {
+    border: none;
+    color: white;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 21px;
+    cursor: pointer;
+    display: inline-block;
+    background-color: transparent;
+    font-stretch: expanded;
+    height: 30px;
+    width: 50px;
+}
+
+.right_header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+}
+.right_header_avatar {
+    height: 50px;
+    border-radius: 25px;
+    width: 50px;
+    position: relative;
+    top: 5px;
+    background-color: #E5B346;
+}
+
+.friendMessageSpace {
+
+    width: auto;
+    padding-bottom: 3px;
+    padding-left: 5px;
+}
+.friendMessageSpace_mainMessageHolder_message {
+
+    padding-top: 15px;
+    padding-right: 15px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    border-radius: 0px 7px 7px;
+    word-wrap: break-word;
+    max-width: 70%;
+    display: inline-block;
+    margin-left: 40px;
+}
+
+
+.message_bar {
+    height: auto;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+	background-color:  rgba(255, 255, 256, .3);
+    /* [disabled]overflow-y: scroll; */
+}
+.response_contentWrap {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;
+
+    text-align: center;
+    padding-top: 10px;
+    height: 100%;
+}
+
+
+.inner_messege_bar {
+
+}
+
+.response_bar {
+    height: 70px;
+    text-align: center;
+    background-color: white;
+}
+
+
+.left_header   {
+    height: 70px;
+}
+.mainIconStyle {
+    color: #a8a8a8;
+}
+.myMessageSpace_mainMessageHolder_message {
+
+    border-radius: 10px 10px 0px;
+    padding-top: 15px;
+    padding-right: 10px;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    display: inline-block;
+    word-wrap: break-word;
+    max-width: 70%;
+}
+.myMessageSpace {
+
+    text-align: right;
+    padding-right: 5px;
+    padding-bottom: 3px;
+}
+.myMessageSpace_info_time {
+    float: right;
+    margin-left: 10px;
+    display: inline-block;
+
+}
+.deliveryStatus_bar {
+    text-align: right;
+    display: inline-block;
+}
+.friendMessageSpace_info_deliveryStatus {
+    display: inline-block;
+
+
+}
+.friendMessageSpace_mainMessageHolder_message_floatMenu_addEmoji_button {
+    padding-left: 10px;
+    display: inline-block;
+}
+.myMessageSpace_additionalMessageHolder_message_floatMenu_addEmoji_button {
+    padding-left: 10px;
+    display: inline-block;
+}
+.myMessageSpace_mainMessageHolder_message_floatMenu_addEmoji_button {
+    padding-left: 10px;
+    display: inline-block;
+}
+.addEmojiPlus  {
+    font-size: 10px;
+    color: green;
+    padding-left: -4px;
+    margin-left: -4px;
+}
+.addEmojiSmile {
+    color: #ffff1a;
+}
+
+
+
+.friendMessageSpace_info_time {
+    display: inline-block;
+
+}
+.reply_bar {
+    display: inline-block;
+    font-size: 36px;
+    color: green;
+    opacity: 0.5;
+}
+.friendMessageSpace_mainMessageHolder_message_senderName {
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+.senderMe_bar {
+    padding-bottom: 10px;
+    font-weight: bold;
+
+}
+.friendMessageSpace_mainMessageHolder_message_emojiReaction   {
+    padding-top: 7px;
+}
+.friendMessageSpace_mainMessageHolder_message_floatMenu_reply_button {
+    display: inline-block;
+
+
+}.myMessageSpace_additionalMessageHolder_message_floatMenu_editMessage_button {
+    display: inline-block;
+
+
+}.myMessageSpace_mainMessageHolder_message_floatMenu_editMessage_button {
+    display: inline-block;
+
+
+}
+.friendMessageSpace_mainMessageHolder_message_floatMenu {
+
+    padding: 5px;
+    border-radius: 7px;
+    display: inline-block;
+    position: relative;
+    text-align: right;
+    bottom: 30px;
+    opacity: 0.5;
+}
+.friendMessageSpace_mainMessageHolder_message_floatMenu_other_button {
+    padding-left: 2px;
+    display: inline-block;
+}
+.myMessageSpace_additionalMessageHolder_message_floatMenu_other_button {
+    padding-left: 2px;
+    display: inline-block;
+}
+.myMessageSpace_mainMessageHolder_message_floatMenu_other_button {
+    padding-left: 2px;
+    display: inline-block;
+}
+.friendMessageSpace_additionalMessageHolder_message {
+
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    border-radius: 7px;
+    word-wrap: break-word;
+    max-width: 70%;
+    margin-top: 3px;
+    display: inline-block;
+    margin-left: 40px;
+}
+.friendMessageSpace_info_avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    top: 20px;
+    border-radius: 20px;
+    margin-top: -20px;
+    background-color: #e5b346;
+}
+.myMessageSpace_mainMessageHolder_message_floatMenuHolder {
+    margin-bottom: -20px;
+    text-align: left;
+}
+
+.friendMessageSpace_mainMessageHolder_message_floatMenuHolder {
+    text-align: right;
+    margin-bottom: -37px;
+}
+
+.myMessageSpace_mainMessageHolder_message_floatMenu {
+
+    padding: 5px;
+    border-radius: 7px;
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    bottom: 30px;
+    opacity: 0.5;
+}
+.myMessageSpace_additionalMessageHolder_message {
+
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    border-radius: 7px 0px 0px 7px;
+    word-wrap: break-word;
+    max-width: 70%;
+    margin-top: 3px;
+    display: inline-block;
+}
+.myMessageSpace_mainMessageHolder_message_emojiReaction {
+    padding-top: 7px;
+}
+.contact_bar {
+    height: 60px;
+
+    cursor: pointer;
+}
+.contactBar_avatar {
+    height: 50px;
+    border-radius: 25px;
+    width: 50px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    float: left;
+    background-color: #e5b346;
+}
+.contactInfo_header_contactName {
+    display: inline-block;
+    flex: auto;
+    padding-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 14px;
+}
+.contactInfo_contactLastMessage {
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+
+.contactInfo_header_contactLastMessageTime {
+    display: inline-block;
+    padding-right: 10px;
+    overflow: hidden;
+}
+.contactInfo_header {
+    display: flex;
+    padding-top: 7px;
+}
+.contactInfo {
+    margin-left: 50px;
+}
+.myMessageSpace_additionalMessageHolder_message_floatMenuHolder {
+    margin-top: -25px;
+    text-align: left;
+
+
+
+
+}
+.myMessageSpace_additionalMessageHolder_message_floatMenu {
+
+    padding: 5px;
+    border-radius: 7px;
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    opacity: 0.5;
+}
+.contactList {
+    /* [disabled]overflow-y: scroll; */
+    /* [disabled]overflow-x: hidden; */
+
+}
+.floatHolderInterlocutorAddictionalMessage_bar {
+    margin-top: -30px;
+    text-align: right;
+
+
+
+}
+.friendMessageSpace_additionalMessageHolder_message_floatMenu {
+    padding: 5px;
+    border-radius: 7px;
+    display: inline-block;
+    position: relative;
+    text-align: right;
+    opacity: 0.5;
+    bottom: 25px;
+}
+.addFileButton_bar {
+    display: inline-block;
+}
+.sendFile {
+    display: inline-block;
+}
+.emoji {
+    display: inline-block;
+}
+.response_inputAliner {
+    display: inline-block;
+    width: 65%;
+}
+.sendFile_icon_aliner {
+    display: inline-block;
+    margin-right: 3%;
+    text-decoration-color: white;
+    font-size: 20px;
+}
+
+.sendEmoji_icon_aliner {
+    display: inline-block;
+    width: 50px;
+    height: 40px;
+    margin-left: 3%;
+    margin-bottom: auto;
+}
+
+.response_contentWrap_button_sendFile {
+    cursor: pointer;
+    border-style: none;
+    margin-right: 2%;
+    position: relative;
+    bottom: 10px;
+    background-color: transparent;
+    font-size: 30px;
+}
+
+.response_contentWrap_button_emoji {
+    cursor: pointer;
+    border-style: none;
+    margin-left: 2%;
+    position: relative;
+    bottom: 10px;
+    background-color: transparent;
+    font-size: 30px;
+
+}
+.response_input {
+    background-color: white;
+    text-align: left;
+    min-height: 20px;
+    padding: 10px;
+    max-height: 150px;
+}
+
+.communication_bar .add_contact_bar .fas.fa-user-plus.add_contact_icon {
+    cursor: pointer;
+}
+
+
+
+.add_group_icon:hover{
+	color : #12B97E;
+}
+.contact_bar:hover{
+	background : #f1f1f1;
+}
+.myMessageSpace_mainMessageHolder_message_floatMenu:hover{
+	opacity: 1;
+}
+.myMessageSpace_additionalMessageHolder_message_floatMenu:hover{
+	opacity: 1;
+}
+.friendMessageSpace_mainMessageHolder_message_floatMenu:hover{
+	opacity: 1;
+}
+.friendMessageSpace_additionalMessageHolder_message_floatMenu:hover{
+	opacity: 1;
+}
+
+.response_input[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #555; 
+}
+
+.response_input[placeholder]:empty:focus:before {
+    content: "";
+}
+.right_header_contentWrapLeft{
+    float: left;
+    width: 50%;
+    height: 100%;
+	
+
+}
+.right_header_contentWrapRight{
+    width: 50%;
+
+    
+
+}
+.right_header_avatar_bar{
+    display: inline-block;
+    margin-left: 20px;
+}
+.right_header_userOrGroupInfo{
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+.right_header_mobile_back_btn_bar{
+    display: none;
+    margin: 10px;
+    font-size: 16px;
+    position: relative;
+    bottom: 10px;
+}
+.right_header_buttons_bar{
+    text-align: right;
+    margin-left: auto;
+}
+.right_header_button {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.right_header_button_dotmenu{
+	margin-right: 25px;
+}
+
+.right_header_userOrGroupInfo_name {
+    margin-bottom: 7px;
+    font-weight: bold;
+    font-size: 16px;
+	display: block;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+
+}
+.right_header_userOrGroupInfo_info{
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+.menuIcon { 
+	transform: scale(1.5,1); 
+}
+body{
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	font-size: 14px;
+		
+}
+
+.friendMessageSpace_additionalMessageHolder_message_floatMenu_addEmoji_button {
+	display: inline-block;
+}
+
+.friendMessageSpace_additionalMessageHolder_message_floatMenu_reply_button {
+	display: inline-block;
+}
+
+.friendMessageSpace_additionalMessageHolder_message_floatMenu_other_button {
+	display: inline-block;
+}
+.mainIconStyle:hover{
+	color: #78e5b7;
+}
+.mainIconStyle{
+	cursor: pointer;
+}
+.messageBackgroundColorStyle {
+    background-color: white;
+    opacity: 0.8;
+}
+
+.friendMessageSpace_additionalMessageHolder_message_floatMenuHolder {
+	text-align: right;
+	margin-bottom: -30px;
+}
+
+.friendMessageSpace_mainMessageHolder_message_foatMenuHolder {
+	text-align: right;
+	margin-bottom: -30px;
+}
+.floatMenuStyle{
+	background-color: #f1f1f1;
+	opacity: 1;
+}
+
+.friendMessageSpace_additionalMessageHolder_message_emojiReaction {
+	margin-top: 5px;
+}
+
+.myMessageSpace_additionalMessageHolder_message_emojiReaction {
+	margin-top: 5px;
+}

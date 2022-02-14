@@ -21,6 +21,5 @@ namespace GL_PROJ.Models.DTO
 
         // Group Id
         public int GroupId { get; set; }
-
     }
 }

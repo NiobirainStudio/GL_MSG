@@ -37,7 +37,7 @@ namespace GL_PROJ.AppConfig
         public void AddToGroups(int user_id)
         {
                 
-            int[] groups = (from ugr in _db.UserGroupRelations
+           int[] groups = (from ugr in _db.UserGroupRelations
                             where ugr.UserId == user_id
                             select ugr.GroupId).ToArray();
 

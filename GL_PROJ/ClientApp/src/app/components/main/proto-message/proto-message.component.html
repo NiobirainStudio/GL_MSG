@@ -1,0 +1,4 @@
+<div *ngIf="toggle(message.userId, 1); else other_content">
+    <app-my-message [messageData]="message"></app-my-message>
+</div>
+<ng-template #other_content><app-friend-message [messageData]="message"></app-friend-message></ng-template>

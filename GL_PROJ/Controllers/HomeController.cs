@@ -17,7 +17,7 @@ using GL_PROJ.TimerFeatures;
 
 namespace GL_PROJ.Controllers
 {
-    public class HomeController : ControllerBase //Controller
+    public class HomeController : ControllerBase
     {
         // Database manager linking
         private readonly IDB _dbManager;
@@ -295,12 +295,48 @@ namespace GL_PROJ.Controllers
         
         public IActionResult GetUserGroups([FromBody] int user_id)
         {
-            return Ok(new { groups = (from rel in _db.UserGroupRelations
-                                      join grp in _db.Groups
-                                      on rel.GroupId equals grp.Id
-                                      where rel.UserId == user_id
-                                      select grp).ToArray()
-            });
+            var data = new { groups = (from rel in _db.UserGroupRelations
+                                       join grp in _db.Groups
+                                       on rel.GroupId equals grp.Id
+                                       where rel.UserId == user_id
+                                       select new GroupDTO
+                                       {
+                                           Id = grp.Id,
+                                           Description = grp.Description,
+                                           Name = grp.Name,
+                                           LastMessage = (from msg in _db.Messages
+                                                          where msg.GroupId == grp.Id
+                                                          orderby msg.Date descending
+                                                          select new MessageDTO
+                                                          {
+                                                              MessageId = msg.Id,
+                                                              GroupId = msg.GroupId,
+                                                              Data = msg.Data,
+                                                              Date = msg.Date,
+                                                              Type = msg.Type,
+                                                              UserId = msg.UserId
+                                                          }
+                                                         ).ToArray()[0]
+                                       }).ToArray()
+            };
+            return Ok(data);
+        }
+
+        public IActionResult GetGroupMessages([FromBody] int group_id)
+        {
+            var data = new { messages = (from msg in _db.Messages
+                                        where msg.GroupId == group_id
+                                        select new MessageDTO
+                                        {
+                                            MessageId = msg.Id,
+                                            GroupId = msg.GroupId,
+                                            Data = msg.Data,
+                                            Date = msg.Date,
+                                            Type = msg.Type,
+                                            UserId = msg.UserId
+                                        }).ToArray()
+            };
+            return Ok(data);
         }
 
         public IActionResult SignIn([FromBody] LogRegDTO lr)

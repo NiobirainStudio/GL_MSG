@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders} from '@angular/common/http'
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import * as signalR from '@aspnet/signalr';
 
@@ -7,9 +7,6 @@ import * as signalR from '@aspnet/signalr';
   providedIn: 'root'
 })
 export class MainService {
-
-  public data: string;
-  public broadcast_data: string;
 
   readonly URL = 'https://localhost:7047/Home';
 
@@ -19,8 +16,8 @@ export class MainService {
 
   public StartConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
+      //.withAutomaticReconnect()
+      //.configureLogging(signalR.LogLevel.Information)
       .withUrl('https://localhost:7047/hub')
       .build();
 
@@ -28,33 +25,23 @@ export class MainService {
       .start()
       .then(() => { 
         console.log('Connection started!');
-        this.OnConnectionStart();
       })
       .catch(err => console.log('Error while connecting to hub ' + err));
   }
 
-
-  private OnConnectionStart() {
-    // Setup listeners
-    this.ListenOnMessages();
-
-
-    // Conncet to SignalR server groups
-    setTimeout(() => { this.StartGroupChannel(+(localStorage.getItem("UserSession") || -1)) }, 1000);
-  }
-
+  /*
   // Reconnect on losing connection
   public OnReconnectedEvent(){
     this.hubConnection.onreconnected(() => {
       console.log("Reconnected!");
       this.OnConnectionStart();
     });
-  }
+  }*/
 
   // Listeners
-  public ListenOnMessages() {
+  public ListenOnMessages(callbackFunction: (args: any) => void) {
     this.hubConnection.on('GroupMessages', (data) => {
-      console.log(data);
+      callbackFunction(data);
     });
   }
 
@@ -85,13 +72,17 @@ export class MainService {
   }
   */
 
-  public PostAndRecieveData(data: number, url: string) {
-    return this.http.post<any>(
+  public PostAndRecieveData<T>(data: number, url: string) {
+    return this.http.post<T>(
       this.URL + url,
       JSON.stringify(data),
       { headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     });
+  }
+
+  public EEE(){
+    console.log("EEE");
   }
 }

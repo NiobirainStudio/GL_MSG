@@ -1,14 +1,77 @@
-<button (click)="WriteMessage()">Write!</button>
+<!doctype html>
+<html lang="en-US"><head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light Theme</title>
 
-<br>
 
-<form>
-    <input type="radio" id="rb1" name="group" value="Press me1!">
-    <label for="rb1">Press me11!</label><br>
-    <input type="radio" id="rb2" name="group" value="Press me2!">
-    <label for="rb2">Press me22!</label><br>
-</form>
+</head>
+<body>
+<div class="main_container">
+  <div class="left_main_colum">
+		  <div class="left_header">
+			<div class="left_header_menuAndSearch">
+				<div class = "left_header_menuAndSearch_menu_iconAliner">
+					<button class="left_header_menuAndSearch_menubutton"><i class="fas fa-bars menuIcon mainIconStyle"></i></button>
+				</div>
+      
+			  <div class="left_header_menuAndSearch_searchInput">
+					<input type="text" placeholder="  Search" class="search_input">
+				</div>
+			</div>
+		 
+			<!--<div class="left_header_communication_bar">
+			  <div class="left_header_communicationBar_addContactButton"><i class="fas fa-user-plus"></i></div>
 
-<br>
 
-<button (click)="GetGroups()">GetGroups!</button>
+			  <div class="left_header_communicationBar_addGroupButton"><i class="fas fa-users"></i></div>
+			</div>-->
+		</div>
+	  	<div class="contactList">
+			<ng-container *ngFor="let g of groupArray; let i=index">
+				<app-friend-group-bar [friendOrGroupData] ="g" (groupSelected)="GetMessages(g.id)" ></app-friend-group-bar>
+			</ng-container>
+	  </div>
+  </div>
+  
+  <div class="right_main_colum">
+	  <div class="right_header">
+		  <div class="right_header_contentWrapLeft">
+			<app-header-info></app-header-info>
+		  	</div>
+		  	<div class="right_header_contentWrapRight">
+			  <div class="right_header_buttons_bar">
+				  <div class="right_header_button right_header_button_search"><i class="fas fa-search mainIconStyle"></i></div>
+				  <div class="right_header_button right_header_button_call"><i class="fas fa-phone-alt mainIconStyle"></i></div>
+				  <div class="right_header_button right_header_button_dotmenu"><i class="fas fa-ellipsis-v mainIconStyle"></i></div>  
+				  
+			  </div>
+		  </div>
+	  </div>
+	<div class="message_bar">
+    <div class="messageBarWidthHolder">
+		
+		<ng-container *ngFor="let m of messageArray; let i=index">
+			<app-proto-message [message] ="m"></app-proto-message>
+		</ng-container>
+
+      </div>
+	  </div>
+    <div class="response_bar">
+		<div class="response_contentWrap">
+			<button class="response_contentWrap_button_sendFile"><i class="fas fa-paperclip mainIconStyle"></i></button>
+
+				<div class="response_inputAliner">
+					<div id="newMessage" (resized)="onResized($event)" (keydown)="onKey($event)" class="response_input" placeholder="Write a  message..." contenteditable="true"> </div> 
+				</div>
+
+			<button class="response_contentWrap_button_emoji"><i class="far fa-smile mainIconStyle"></i></button>
+
+			<button (click)="WriteMessage()">Send</button>
+		</div>
+	  </div>
+  </div>
+</div>
+</body>
+</html>
