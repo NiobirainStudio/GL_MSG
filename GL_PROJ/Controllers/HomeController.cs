@@ -295,6 +295,8 @@ namespace GL_PROJ.Controllers
         
         public IActionResult GetUserGroups([FromBody] int user_id)
         {
+            var result = new { groups = _dbManager.GetGroupsByUserId(user_id) };
+            /*
             var data = new { groups = (from rel in _db.UserGroupRelations
                                        join grp in _db.Groups
                                        on rel.GroupId equals grp.Id
@@ -318,12 +320,14 @@ namespace GL_PROJ.Controllers
                                                           }
                                                          ).ToArray()[0]
                                        }).ToArray()
-            };
-            return Ok(data);
+            };*/
+            return Ok(result);
         }
 
         public IActionResult GetGroupMessages([FromBody] int group_id)
         {
+            var result = new { messages = _dbManager.GetMessagesByGroupId(group_id) };
+            /*
             var data = new { messages = (from msg in _db.Messages
                                         where msg.GroupId == group_id
                                         select new MessageDTO
@@ -335,8 +339,8 @@ namespace GL_PROJ.Controllers
                                             Type = msg.Type,
                                             UserId = msg.UserId
                                         }).ToArray()
-            };
-            return Ok(data);
+            };*/
+            return Ok(result);
         }
 
         public IActionResult SignIn([FromBody] LogRegDTO lr)
@@ -356,7 +360,8 @@ namespace GL_PROJ.Controllers
                 return Ok(new { code = 1 });
             }
 
-            return Ok(new { code = 2, id = user.Id });
+            _dbManager.CreateGroup(user.Id, "The Great Beginning", "");
+            return Ok(new { code = 2, session = user.Id });
         }
     }
 }

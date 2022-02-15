@@ -12,28 +12,28 @@ namespace GL_PROJ.Models.DBService
         //------------------------------//
         // Priority - High
         //------------------------------//
-        GroupDTO[] GetGroupsByUserId(uint user_id);
+        GroupDTO[] GetGroupsByUserId(int user_id);
 
         //------------------------------//
         // Retrieves all users of a group
         //------------------------------//
         // Priority - High
         //------------------------------//
-        UserDTO[] GetUsersByGroupId(uint group_id);
+        UserDTO[] GetUsersByGroupId(int group_id);
 
         //------------------------------//
         // Retrieves all messages of a group (sort by date)
         //------------------------------//
         // Priority - High
         //------------------------------//
-        MessageDTO[] GetMessagesByGroupId(uint group_id);
+        MessageDTO[] GetMessagesByGroupId(int group_id);
 
         //------------------------------//
         // Used on socket group joining
         //------------------------------//
         // Priority - High
         //------------------------------//
-        int[] GetGroupIdsByUserId(uint user_id);
+        int[] GetGroupIdsByUserId(int user_id);
 
         //------------------------------//
         // Checking functions
@@ -42,12 +42,12 @@ namespace GL_PROJ.Models.DBService
         //------------------------------//
         // Priority - High
         //------------------------------//
-        bool CheckIfGroupAdmin(uint user_id, uint group_id);
+        bool CheckIfGroupAdmin(int user_id, int group_id);
 
         //------------------------------//
         // Priority - High
         //------------------------------//
-        bool CheckIfInGroup(uint user_id, uint group_id);
+        bool CheckIfInGroup(int user_id, int group_id);
         
 
 
@@ -66,7 +66,7 @@ namespace GL_PROJ.Models.DBService
         //  4 - Password is null
         //  5 - Invalid password (too small/large, includes certain chars...)
         //------------------------------//
-        uint CreateUser(string username, string password, string description);
+        int CreateUser(string username, string password, string description);
 
         //------------------------------//
         // Delete user (check if user is target_user)
@@ -76,7 +76,7 @@ namespace GL_PROJ.Models.DBService
         // Return codes:
         //  0 - All is good
         //------------------------------//
-        uint DeleteUser(uint user_id);
+        int DeleteUser(int user_id);
 
         //------------------------------//
         // Edit user (check if username is not taken)
@@ -88,7 +88,7 @@ namespace GL_PROJ.Models.DBService
         //  1 - Username is already taken
         //  2 - Invalid username
         //------------------------------//
-        uint EditUser(uint user_id, string username, string description);
+        int EditUser(int user_id, string username, string description);
 
 
 
@@ -101,9 +101,10 @@ namespace GL_PROJ.Models.DBService
         //------------------------------//
         // Return codes:
         //  0 - All is good
-        //  1 - Name is already taken
+        //  1 - Invalid name
+        //  2 - Name is already taken
         //------------------------------//
-        uint CreateGroup(uint user_id, string name, string description);
+        int CreateGroup(int user_id, string name, string description);
 
         //------------------------------//
         // Delete group (check if user is admin)
@@ -114,7 +115,7 @@ namespace GL_PROJ.Models.DBService
         //  0 - All is good
         //  1 - You don't have permission to delete this group
         //------------------------------//
-        uint DeleteGroup(uint user_id, uint group_id);
+        int DeleteGroup(int user_id, int group_id);
 
         //------------------------------//
         // Edit group (check if user is admin)
@@ -127,7 +128,7 @@ namespace GL_PROJ.Models.DBService
         //  2 - Name is already taken
         //  3 - Invalid name
         //------------------------------//
-        uint EditGroup(uint user_id, uint group_id, string name, string description);
+        int EditGroup(int user_id, int group_id, string name, string description);
 
 
 
@@ -144,7 +145,7 @@ namespace GL_PROJ.Models.DBService
         //  2 - Data is null
         //  3 - Invalid type
         //------------------------------//
-        uint CreateMessage(uint user_id, uint group_id, string data, uint type);
+        int CreateMessage(int user_id, int group_id, string data, int type);
 
         //------------------------------//
         // Delete message (check if user is author or admin)
@@ -155,7 +156,7 @@ namespace GL_PROJ.Models.DBService
         //  0 - All is good
         //  1 - You can only delete your own messages | not admin
         //------------------------------//
-        uint DeleteMessage(uint user_id, uint message_id);
+        int DeleteMessage(int user_id, int message_id);
 
         //------------------------------//
         // Edit message (check if user is author & if data is not null)
@@ -167,7 +168,7 @@ namespace GL_PROJ.Models.DBService
         //  1 - You can only edit your own messages
         //  2 - Data is null
         //------------------------------//
-        uint EditMessage(uint user_id, uint message_id, string data);
+        int EditMessage(int user_id, int message_id, string data);
 
 
 
@@ -182,7 +183,7 @@ namespace GL_PROJ.Models.DBService
         //  0 - All is good
         //  1 - You are already a member of this group
         //------------------------------//
-        uint JoinGroup(uint user_id, uint group_id);
+        int JoinGroup(int user_id, int group_id);
 
         //------------------------------//
         // Leave group (check if is in group)
@@ -193,7 +194,7 @@ namespace GL_PROJ.Models.DBService
         //  0 - All is good
         //  1 - You are not a member of this group
         //------------------------------//
-        uint LeaveGroup(uint user_id, uint group_id);
+        int LeaveGroup(int user_id, int group_id);
 
         //------------------------------//
         // Edit user privilege (check if user_id is admin & user_id != target_id)
@@ -207,6 +208,6 @@ namespace GL_PROJ.Models.DBService
         //  3 - You cannot edit your own privileges
         //  4 - You don't have permission
         //------------------------------//
-        uint EditPrivilege(uint user_id, uint target_user_id, uint group_id, uint new_privilege);
+        int EditPrivilege(int user_id, int target_user_id, int group_id, int new_privilege);
     }
 }
