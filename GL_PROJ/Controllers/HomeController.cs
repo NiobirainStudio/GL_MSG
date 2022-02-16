@@ -360,7 +360,7 @@ namespace GL_PROJ.Controllers
                 return Ok(new { code = 1 });
             }
 
-            return Ok(new { code = 2, session = user.Id });
+            return Ok(new { code = 2, session = user.Id, id = user.Id });
         }
     }
 }

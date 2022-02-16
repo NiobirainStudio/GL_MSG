@@ -8,7 +8,7 @@ namespace GL_PROJ.AppConfig
 {
     public class MainHub : Hub
     {
-        public readonly AppDbContext _db;
+        private readonly AppDbContext _db;
         //private readonly IDB _dbManager;
 
         /*
@@ -52,20 +52,21 @@ namespace GL_PROJ.AppConfig
             // 2. Check if user is in the group
 
             // 3. Post message if all is good
-            _db.Messages.Add(new Message { Data = data, Type = type, GroupId = group_id, UserId = user_id, Date = DateTime.Now });
+            var message = new Message { Data = data, Type = type, GroupId = group_id, UserId = user_id, Date = DateTime.Now };
+
+
+            _db.Messages.Add(message);
             _db.SaveChanges();
 
-            SendMessages(user_id, data);
-        }
-
-        private void SendMessages(int user_id, string data)
-        {
-            int[] groups = (from ugr in _db.UserGroupRelations
-                            where ugr.UserId == user_id
-                            select ugr.GroupId).ToArray();
-
-            foreach (int group_id in groups)
-                Clients.Group(group_id.ToString()).SendAsync("GroupMessages", data);
+            Clients.Group(group_id.ToString()).SendAsync("GroupMessages", new MessageDTO
+            {
+                MessageId = message.Id,
+                GroupId = message.GroupId,
+                Data = message.Data,
+                Date = message.Date,
+                Type = message.Type,
+                UserId = message.UserId
+            });
         }
     }
 }

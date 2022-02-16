@@ -24,7 +24,7 @@ namespace GL_PROJ.Models.DBService
             return userbyID != null;
         }
 
-        private User GetUserByUserId(int user_id)
+        public User GetUserByUserId(int user_id)
         {
             return _db.Users.Find(user_id);
         }
