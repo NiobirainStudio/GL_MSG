@@ -236,19 +236,44 @@ namespace GL_PROJ.Models.DBService
             throw new NotImplementedException();
         }
 
+        //Not tested
         public int DeleteMessage(int user_id, int message_id)
         {
-            throw new NotImplementedException();
+            var msg = _db.Messages.Find(message_id);
+            var user = _db.Users.Find(user_id);
+            var group = _db.Groups.Find(msg.GroupId);
+            var ugr = _db.UserGroupRelations.Find(user.Id, group.Id);
+            if (msg == null || user == null || group == null || ugr == null||msg.UserId!=user_id||ugr.Privilege!="admin")
+                return 1;
+            else
+            {
+                _db.Messages.Remove(msg);
+                _db.SaveChanges();
+                return 0;
+            }
         }
-
+        //Not Tested
         public int EditMessage(int user_id, int message_id, string data)
         {
-            throw new NotImplementedException();
+            var msg = _db.Messages.Find(message_id);
+            var user = _db.Users.Find(user_id);
+            var group = _db.Groups.Find(msg.GroupId);
+            var ugr = _db.UserGroupRelations.Find(user.Id, group.Id);
+            if (msg == null || user == null || group == null || ugr == null || msg.UserId != user_id)
+                return 1;
+            if (data == null || data == "")
+                return 2;
+            msg.Data = data;
+            _db.SaveChanges();
+                return 0;
         }
-
+        //TODO adapt for int privilleges
         public int EditPrivilege(int user_id, int target_user_id, int group_id, int new_privilege)
         {
-            throw new NotImplementedException();
+            var user = _db.Users.Find(user_id);
+            var target_user = _db.Users.Find(target_user_id);
+            var group = _db.Groups.Find(group_id);
+            return 0;
         }
     }
 }
