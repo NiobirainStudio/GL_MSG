@@ -87,7 +87,7 @@ namespace GL_PROJ.Models.DBService
         /*ordered by date ascending*/
         public MessageDTO[] GetMessagesByGroupId(int group_id) /*работает*/
         {
-            return _db.Messages.Where(message => message.GroupId == group_id).
+            var data = _db.Messages.Where(message => message.GroupId == group_id).
                 Select(message => new MessageDTO
                 {
                     MessageId = message.Id,
@@ -98,6 +98,7 @@ namespace GL_PROJ.Models.DBService
                     UserId = message.UserId
                 })
                 .OrderBy(message => message.Date).ToArray();
+            return data;
         }
         /*checking methods*/
         //return true if in group?

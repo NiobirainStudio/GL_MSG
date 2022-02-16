@@ -52,7 +52,7 @@ namespace GL_PROJ.AppConfig
             // 2. Check if user is in the group
 
             // 3. Post message if all is good
-            _db.Messages.Add(new Message { Data = data, Type = type, GroupId = group_id, UserId = 1, Date = DateTime.Now });
+            _db.Messages.Add(new Message { Data = data, Type = type, GroupId = group_id, UserId = user_id, Date = DateTime.Now });
             _db.SaveChanges();
 
             SendMessages(user_id, data);

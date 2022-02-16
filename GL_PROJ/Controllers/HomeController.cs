@@ -360,7 +360,6 @@ namespace GL_PROJ.Controllers
                 return Ok(new { code = 1 });
             }
 
-            _dbManager.CreateGroup(user.Id, "The Great Beginning", "");
             return Ok(new { code = 2, session = user.Id });
         }
     }
