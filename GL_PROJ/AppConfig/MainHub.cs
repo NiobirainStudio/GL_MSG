@@ -29,12 +29,23 @@ namespace GL_PROJ.AppConfig
         public async Task BroadcastToGroups(string data) => await Clients.Group("boiz").SendAsync("Global", data);
         */
 
-        public MainHub(AppDbContext db, IDB dbManager)
+        public MainHub(AppDbContext db)
         {
             _db = db;
         }
 
-        public void PostMessage(string session, string data, int type, int group_id)
+        public void AddToGroups(int user_id)
+        {
+                
+           int[] groups = (from ugr in _db.UserGroupRelations
+                            where ugr.UserId == user_id
+                            select ugr.GroupId).ToArray();
+
+            foreach (int group_id in groups)
+                Groups.AddToGroupAsync(Context.ConnectionId, group_id.ToString());
+        }
+
+        public void PostMessage(int user_id, string data, int type, int group_id)
         {
             // 1. Get user ID from session
 
@@ -44,28 +55,13 @@ namespace GL_PROJ.AppConfig
             _db.Messages.Add(new Message { Data = data, Type = type, GroupId = group_id, UserId = 1, Date = DateTime.Now });
             _db.SaveChanges();
 
-            SendMessages(session, data);
+            SendMessages(user_id, data);
         }
 
-        public void JoinGroup(int userId, int groupId)
-        {
-
-        }
-
-        public void AddToGroups(string session)
+        private void SendMessages(int user_id, string data)
         {
             int[] groups = (from ugr in _db.UserGroupRelations
-                                 where ugr.UserId == 1
-                                 select ugr.GroupId).ToArray();
-            
-            foreach (int group_id in groups)
-                Groups.AddToGroupAsync(Context.ConnectionId, group_id.ToString());
-        }
-
-        private void SendMessages(string session, string data)
-        {
-            int[] groups = (from ugr in _db.UserGroupRelations
-                            where ugr.UserId == 1
+                            where ugr.UserId == user_id
                             select ugr.GroupId).ToArray();
 
             foreach (int group_id in groups)
