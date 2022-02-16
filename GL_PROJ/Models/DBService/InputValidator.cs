@@ -24,7 +24,7 @@ namespace GL_PROJ.Models.DBService
             return true;
         }
         //TODO
-        public bool MessageTypeValid(uint type)
+        public bool MessageTypeValid(int type)
         {
             return true;
         }
