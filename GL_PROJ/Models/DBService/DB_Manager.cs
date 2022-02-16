@@ -216,25 +216,7 @@ namespace GL_PROJ.Models.DBService
         }
 
         /*low-priority-methods*/
-        public int DeleteUser(int user_id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int EditUser(int user_id, string username, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int DeleteGroup(int user_id, int group_id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int EditGroup(int user_id, int group_id, string name, string description)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         //Not tested
         public int DeleteMessage(int user_id, int message_id)
@@ -274,6 +256,65 @@ namespace GL_PROJ.Models.DBService
             var target_user = _db.Users.Find(target_user_id);
             var group = _db.Groups.Find(group_id);
             return 0;
+        }
+
+        public int DeleteUser(int user_id)
+        {
+            _db.Users.Remove(_db.Users.FirstOrDefault(user => user.Id == user_id));
+            return 0;
+        }
+
+        public int EditUser(int user_id, string username, string description)
+        {
+            if (IV.UsernameValid(username))
+            {
+                User uniqueUsernameChecking = _db.Users.FirstOrDefault(user => user.Name.Equals(username) && user.Id != user_id);
+                if (uniqueUsernameChecking != default(User)) //если сушествует юзер с данным username, возвращаем 1
+                {
+                    return 1;
+                }
+                User userToEdit = _db.Users.FirstOrDefault(user => user.Id.Equals(user_id)); /*внесение изменений  в таблицу БД*/
+                userToEdit.Description = description;
+                userToEdit.Name = username;
+                _db.SaveChanges();
+                return 0;
+            }
+            return 2; //если юзернейм не проходит валидацию, возвращаем 2
+        }
+
+        public int DeleteGroup(int user_id, int group_id) /*EF Core поддерживает каскадное удаление, а значит после удаления группы должна удалиться и сущность UserGroupRelation*/
+        {
+            UserGroupRelation privilegeByUserID = _db.UserGroupRelations.SingleOrDefault(relation => relation.UserId == user_id && relation.GroupId == group_id);
+            if (privilegeByUserID.Privilege.ToLower() != "admin")
+            {
+                return 1;
+            }
+            _db.Groups.Remove(_db.Groups.SingleOrDefault(group => group.Id == group_id));
+            _db.SaveChanges();
+            return 0;
+        }
+
+        public int EditGroup(int user_id, int group_id, string name, string description)
+        {
+            UserGroupRelation privilegeByUserID = _db.UserGroupRelations.SingleOrDefault(relation => relation.UserId == user_id && relation.GroupId == group_id);
+            if (IV.GroupnameValid(name))
+            {
+                if (privilegeByUserID.Privilege.ToLower() != "admin")
+                {
+                    return 1;
+                }
+                Group uniqueUsernameChecking = _db.Groups.FirstOrDefault(group => group.Name.Equals(name) && group.Id != group_id);
+                if (uniqueUsernameChecking != default(Group))
+                {
+                    return 2;
+                }
+                Group groupToEdit = _db.Groups.SingleOrDefault(group => group.Id == group_id);
+                groupToEdit.Name = name;
+                groupToEdit.Description = description;
+                _db.SaveChanges();
+                return 0;
+            }
+            return 3;
         }
     }
 }
