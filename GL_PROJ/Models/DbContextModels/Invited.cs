@@ -2,7 +2,7 @@
 
 namespace GL_PROJ.Models.DbContextModels
 {
-    public class UserGroupRelation
+    public class Invited
     {
         // User Id
         [Required]
@@ -11,7 +11,6 @@ namespace GL_PROJ.Models.DbContextModels
         // Defining a foreign key from users
         [Required]
         public User User { get; set; }
-
 
         // Group Id
         [Required]
@@ -22,12 +21,7 @@ namespace GL_PROJ.Models.DbContextModels
         public Group Group { get; set; }
 
         [Required]
-        public int LastViewed { get; set; }
+        public int InviterId { get; set; }
 
-        [Required]
-        public bool IsMuted { get; set; }
-        // User privilege
-        [Required]
-        public string Privilege { get; set; }
     }
 }

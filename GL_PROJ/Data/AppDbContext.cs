@@ -10,6 +10,14 @@ namespace GL_PROJ.Data
         // Users table
         public DbSet<User> Users { get; set; }
 
+        //Sessions table    
+        public DbSet<Sessions> Sessions { get; set; }
+
+        //Blocked table
+        public DbSet<Blocked> Blocked { get; set; }
+
+        //Table for invited
+        public DbSet<Invited> Inviteds { get; set; }
 
         // Groups table
         public DbSet<Group> Groups { get; set; }
@@ -17,6 +25,10 @@ namespace GL_PROJ.Data
 
         // Messages table
         public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Icons> Icons { get; set; }
+
+        public DbSet<Files> Files { get; set; }
 
 
         // User - Group relation
@@ -33,6 +45,10 @@ namespace GL_PROJ.Data
         {
             modelBuilder.Entity<UserGroupRelation>()
                 .HasKey(pc => new { pc.UserId, pc.GroupId });
+            modelBuilder.Entity<Blocked>().
+                HasKey(pc => new {pc.UserId, pc.GroupId});
+            modelBuilder.Entity<Invited>().
+                HasKey(pc => new { pc.UserId, pc.GroupId });
         }
     }
 }

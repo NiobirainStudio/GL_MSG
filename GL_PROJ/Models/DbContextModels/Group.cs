@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GL_PROJ.Models.DbContextModels
 {
@@ -10,7 +11,19 @@ namespace GL_PROJ.Models.DbContextModels
 
         // Group name
         [Required]
+        [MaxLength(32)]
         public string Name { get; set; }
+        
+        [Required]
+
+        [ForeignKey("GroupIcon")]
+        public int GroupIcon { get; set; }
+        
+        [Required]
+        public Icons Icon { get; set; }
+        
+        [Required]
+        public int  GroupType { get; set; }
 
         // Group description
         public string Description { get; set; }
