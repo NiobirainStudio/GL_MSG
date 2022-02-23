@@ -296,8 +296,9 @@ namespace GL_PROJ.Controllers
         public IActionResult GetUserGroups([FromBody] int user_id)
         {
             var result = new { groups = _dbManager.GetGroupsByUserId(user_id) };
+
             /*
-            var data = new { groups = (from rel in _db.UserGroupRelations
+             var data = new { groups = (from rel in _db.UserGroupRelations
                                        join grp in _db.Groups
                                        on rel.GroupId equals grp.Id
                                        where rel.UserId == user_id
@@ -320,28 +321,59 @@ namespace GL_PROJ.Controllers
                                                           }
                                                          ).ToArray()[0]
                                        }).ToArray()
-            };*/
+            };
+             */
+
             return Ok(result);
         }
 
-        public IActionResult GetGroupMessages([FromBody] int group_id)
+
+        public IActionResult GetLastGroupMessages([FromBody] int groupId)
         {
-            var result = new { messages = _dbManager.GetMessagesByGroupId(group_id) };
-            /*
-            var data = new { messages = (from msg in _db.Messages
-                                        where msg.GroupId == group_id
-                                        select new MessageDTO
-                                        {
-                                            MessageId = msg.Id,
-                                            GroupId = msg.GroupId,
-                                            Data = msg.Data,
-                                            Date = msg.Date,
-                                            Type = msg.Type,
-                                            UserId = msg.UserId
-                                        }).ToArray()
-            };*/
+            //var result = new { messages = _dbManager.GetMessagesByGroupId(group_id) };
+
+            var result = new { messages = (from msg in _db.Messages
+                                           where msg.GroupId == groupId
+                                           select new MessageDTO
+                                           {
+                                               MessageId = msg.Id,
+                                               GroupId = msg.GroupId,
+                                               Data = msg.Data,
+                                               Date = msg.Date,
+                                               Type = msg.Type,
+                                               UserId = msg.UserId
+                                           }).ToArray().TakeLast(5)
+            };
             return Ok(result);
         }
+
+
+        public class GXGM_DTO
+        {
+            public string session { get; set; }
+            public int groupId { get; set; }
+            public int lastId { get; set; }
+        }
+        public IActionResult GetXGroupMessages([FromBody] GXGM_DTO i)
+        {
+            
+            //var result = new { messages = _dbManager.GetMessagesByGroupId(group_id) };
+
+            var result = new { messages = (from msg in _db.Messages
+                                           where msg.GroupId == i.groupId && msg.Id < i.lastId
+                                           select new MessageDTO
+                                           {
+                                               MessageId = msg.Id,
+                                               GroupId = msg.GroupId,
+                                               Data = msg.Data,
+                                               Date = msg.Date,
+                                               Type = msg.Type,
+                                               UserId = msg.UserId
+                                           }).ToArray().TakeLast(5)
+            };
+            return Ok(result);
+        }
+
 
         public IActionResult SignIn([FromBody] LogRegDTO lr)
         {
