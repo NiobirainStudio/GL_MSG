@@ -73,7 +73,7 @@ namespace GL_PROJ.Controllers
             _db.Users.Add(user);
             _db.SaveChanges();
             // Redirect to the main method (GET)
-            return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
+            return RedirectToAction("Main", new { userId = user.Id, userName = user.NickName });
         }
         //
         // REGISTRATION PAGE BLOCK END
@@ -126,7 +126,7 @@ namespace GL_PROJ.Controllers
             }
 
             // Redirect to the main method (GET)
-            return RedirectToAction("Main", new { userId = user.Id, userName = user.Name });
+            return RedirectToAction("Main", new { userId = user.Id, userName = user.NickName });
         }
         //
         // LOGIN PAGE BLOCK END
@@ -187,7 +187,7 @@ namespace GL_PROJ.Controllers
                     Date = me.Date,
                     Type = me.Type,
                     UserId = me.UserId,
-                    UserName = me.User.Name,
+                    UserName = me.user.NickName,
                     GroupId = me.GroupId
                 })
                 .ToList();
@@ -344,7 +344,7 @@ namespace GL_PROJ.Controllers
         public IActionResult SignIn([FromBody] LogRegDTO lr)
         {
             // Find user by name
-            var user = _db.Users.FirstOrDefault(u => u.Name == lr.UserName);
+            var user = _db.Users.FirstOrDefault(u => u.NickName == lr.UserName);
 
             // User doesn't exist error
             if (user == null)

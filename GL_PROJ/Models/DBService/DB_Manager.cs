@@ -81,7 +81,7 @@ namespace GL_PROJ.Models.DBService
         public UserDTO[] GetUsersByGroupId(int group_id) /*работает*/
         {
             var usersIDbyGroupID = _db.UserGroupRelations.Where(relation => relation.GroupId == group_id).Select(relation => relation.UserId);
-            return _db.Users.Where(user => usersIDbyGroupID.Contains(user.Id)).Select(user => new UserDTO { Id = user.Id, Description = user.Description, Name = user.Name }).ToArray();
+            return _db.Users.Where(user => usersIDbyGroupID.Contains(user.Id)).Select(user => new UserDTO { Id = user.Id, Description = user.Description, Name = user.NickName }).ToArray();
         }
 
         /*ordered by date ascending*/
@@ -130,7 +130,7 @@ namespace GL_PROJ.Models.DBService
         {
             if (username == null || username == "")
                 return 0;
-            if (_db.Users.SingleOrDefault(u => u.Name == username) != null)
+            if (_db.Users.SingleOrDefault(u => u.NickName == username) != null)
                 return 2;
             if (!IV.UsernameValid(username))
                 return 3;
@@ -142,7 +142,7 @@ namespace GL_PROJ.Models.DBService
 
             _db.Users.Add(new User
             {
-                Name = username,
+                NickName = username,
                 Password = password,
                 Description = description
             });
@@ -169,7 +169,7 @@ namespace GL_PROJ.Models.DBService
             int groupid = GroupByName(name).Id;
             JoinGroup(user_id, groupid);
             MakeAdmin(user_id, groupid);
-            CreateMessage(user_id, groupid, $"{GetUserByUserId(user_id).Name} created the group {name}", 1);
+            CreateMessage(user_id, groupid, $"{GetUserByUserId(user_id).NickName} created the group {name}", 1);
 
             return 0;
 
@@ -268,14 +268,14 @@ namespace GL_PROJ.Models.DBService
         {
             if (IV.UsernameValid(username))
             {
-                User uniqueUsernameChecking = _db.Users.FirstOrDefault(user => user.Name.Equals(username) && user.Id != user_id);
+                User uniqueUsernameChecking = _db.Users.FirstOrDefault(user => user.NickName.Equals(username) && user.Id != user_id);
                 if (uniqueUsernameChecking != default(User)) //если сушествует юзер с данным username, возвращаем 1
                 {
                     return 1;
                 }
                 User userToEdit = _db.Users.FirstOrDefault(user => user.Id.Equals(user_id)); /*внесение изменений  в таблицу БД*/
                 userToEdit.Description = description;
-                userToEdit.Name = username;
+                userToEdit.NickName = username;
                 _db.SaveChanges();
                 return 0;
             }

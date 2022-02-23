@@ -24,12 +24,10 @@ namespace GL_PROJ.Models.DbContextModels
         public string Email { get; set; }
 
         [Required]
-        [ForeignKey("UserIcon")]
-        public int UserIcon { get; set; }
-        
-        [Required]
-        public Icons Icon { get; set; }
+        public int IconId { get; set; }
 
+        [Required]
+        public Icon Icon { get; set; }
         // User password
         [Required]
         [MaxLength(32)]

@@ -2,7 +2,7 @@
 
 namespace GL_PROJ.Models.DbContextModels
 {
-    public class Files
+    public class File
     {
         [Required]
         public int FileId { get; set; }

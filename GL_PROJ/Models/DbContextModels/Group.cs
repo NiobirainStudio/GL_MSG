@@ -20,7 +20,7 @@ namespace GL_PROJ.Models.DbContextModels
         public int GroupIcon { get; set; }
         
         [Required]
-        public Icons Icon { get; set; }
+        public Icon Icon { get; set; }
         
         [Required]
         public int  GroupType { get; set; }

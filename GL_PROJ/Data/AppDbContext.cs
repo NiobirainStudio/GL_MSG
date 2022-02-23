@@ -26,9 +26,9 @@ namespace GL_PROJ.Data
         // Messages table
         public DbSet<Message> Messages { get; set; }
 
-        public DbSet<Icons> Icons { get; set; }
+        public DbSet<Icon> Icons { get; set; }
 
-        public DbSet<Files> Files { get; set; }
+        public DbSet<Models.DbContextModels.File> Files { get; set; }
 
 
         // User - Group relation

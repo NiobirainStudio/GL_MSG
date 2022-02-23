@@ -5,6 +5,7 @@ namespace GL_PROJ.Models.DbContextModels
     public class Sessions
     {
         [Required]
+        [Key]
         public int UserId { get; set; }
 
         [Required]

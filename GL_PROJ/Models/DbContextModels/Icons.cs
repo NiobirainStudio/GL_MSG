@@ -2,7 +2,7 @@
 
 namespace GL_PROJ.Models.DbContextModels
 {
-    public class Icons
+    public class Icon
     {
         [Required]
         public int IconId { get; set; }
